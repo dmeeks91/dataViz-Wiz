@@ -4,6 +4,10 @@
 
 DataViz-Wiz brings [The Graphic Continuum Match It Game](https://policyviz.com/product/the-graphic-continuum-match-it-game/) by [Severino Ribecca](https://www.datavizcatalogue.com) and [Jonathan Schwabish](https://www.policyviz.com) to your mobile device.
 
+## Screen Layout
+
+![Screen Layout](./client/public/images/screenlayout.jpg)
+
 ## Roles
 
 Team Member | UI | Game Component | Stats Component | Learn Component | Firebase | MongoDB | Routing | Toastr | Freesound | Animation
@@ -11,6 +15,10 @@ Team Member | UI | Game Component | Stats Component | Learn Component | Firebase
 Dominique | X | X | X | | X | | X | | | X
 Pete | X | X | | X | | X | | X | X | X
 Erin | X | | X | X | | X | X | | X | X
+
+## Project Management Board
+
+![Project Management Board](./client/public/images/kanban.png)
 
 ### Week 1 – Plan, Design, and Research (06/23/18) 
 - [ ] Research Toastr, Freesound, and Animation libraries
@@ -31,7 +39,3 @@ Erin | X | | X | X | | X | X | | X | X
 - [ ] Add sound and animation
 - [ ] Working react side panel to organize pages
 - [ ] Working two-player version of the game (Firebase)
-
-## Project Management Board
-
-![Project Management Board](./client/public/images/kanban.png)
