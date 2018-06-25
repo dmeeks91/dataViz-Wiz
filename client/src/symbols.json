@@ -1,0 +1,126 @@
+[
+    {
+        "name": "symbol01",
+        "filepath": "/symbols/symbol01.png"
+    },
+    {
+        "name": "symbol02",
+        "filepath": "./symbols/symbol02.png"
+    },
+    {
+        "name": "symbol03",
+        "filepath": "./symbols/symbol03.png"
+    },
+    {
+        "name": "symbol04",
+        "filepath": "./symbols/symbol04.png"
+    },
+    {
+        "name": "symbol05",
+        "filepath": "./symbols/symbol05.png"
+    },
+    {
+        "name": "symbol06",
+        "filepath": "./symbols/symbol06.png"
+    },
+    {
+        "name": "symbol07",
+        "filepath": "./symbols/symbol07.png"
+    },
+    {
+        "name": "symbol08",
+        "filepath": "./symbols/symbol08.png"
+    },
+    {
+        "name": "symbol09",
+        "filepath": "./symbols/symbol09.png"
+    },
+    {
+        "name": "symbol10",
+        "filepath": "./symbols/symbol10.png"
+    },
+    {
+        "name": "symbol11",
+        "filepath": "./symbols/symbol11.png"
+    },
+    {
+        "name": "symbol12",
+        "filepath": "./symbols/symbol12.png"
+    },
+    {
+        "name": "symbol13",
+        "filepath": "./symbols/symbol13.png"
+    },
+    {
+        "name": "symbol14",
+        "filepath": "./symbols/symbol14.png"
+    },
+    {
+        "name": "symbol15",
+        "filepath": "./symbols/symbol15.png"
+    },
+    {
+        "name": "symbol16",
+        "filepath": "./symbols/symbol16.png"
+    },
+    {
+        "name": "symbol17",
+        "filepath": "./symbols/symbol17.png"
+    },
+    {
+        "name": "symbol18",
+        "filepath": "./symbols/symbol18.png"
+    },
+    {
+        "name": "symbol19",
+        "filepath": "./symbols/symbol19.png"
+    },
+    {
+        "name": "symbol20",
+        "filepath": "./symbols/symbol20.png"
+    },
+    {
+        "name": "symbol21",
+        "filepath": "./symbols/symbol21.png"
+    },
+    {
+        "name": "symbol22",
+        "filepath": "./symbols/symbol22.png"
+    },
+    {
+        "name": "symbol23",
+        "filepath": "./symbols/symbol23.png"
+    },
+    {
+        "name": "symbol24",
+        "filepath": "./symbols/symbol24.png"
+    },
+    {
+        "name": "symbol25",
+        "filepath": "./symbols/symbol25.png"
+    },
+    {
+        "name": "symbol26",
+        "filepath": "./symbols/symbol26.png"
+    },
+    {
+        "name": "symbol27",
+        "filepath": "./symbols/symbol27.png"
+    },
+    {
+        "name": "symbol28",
+        "filepath": "./symbols/symbol28.png"
+    },
+    {
+        "name": "symbol29",
+        "filepath": "./symbols/symbol29.png"
+    },
+    {
+        "name": "symbol30",
+        "filepath": "./symbols/symbol30.png"
+    },
+    {
+        "name": "symbol31",
+        "filepath": "./symbols/symbol31.png"
+    }    
+]
