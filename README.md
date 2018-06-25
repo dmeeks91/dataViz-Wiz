@@ -24,7 +24,7 @@ Erin | X | | X | X | | X | X | | X | X
 - [ ] Research Toastr, Freesound, and Animation libraries
 - [ ] Mock-up user interface
 - [ ] Plan for design of UI
-- [ ] Scan images
+- [x] Scan images
 - [ ] Brainstorm mongoDB document model
 - [ ] Finalize game logic
 
