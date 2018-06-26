@@ -1,7 +1,7 @@
 import React from "react";
 import "./GLogo.css";
 
-const GLogo = () => (
+const GLogo = () => (    
     <div className="row align-items-center">
         <div className="col-sm-2 logoCol">
             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="gLogo">
