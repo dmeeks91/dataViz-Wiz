@@ -1,0 +1,25 @@
+.logoCol{
+    background-color: #f6f6f8;
+    padding: 2%;
+    padding-bottom: unset;
+    border-radius: 5%;
+    border: 1px solid #34a853;
+}
+
+.gBtn .row {
+    max-width: 300px;
+    margin: auto;
+    padding: 1%;
+    border: 1px solid #fff;
+    background-color: #4285f4;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px 0 #151414db;
+}
+
+svg.gLogo {
+    width: 90%;
+}
+
+.col-sm-10 {
+    height: 100%;
+}

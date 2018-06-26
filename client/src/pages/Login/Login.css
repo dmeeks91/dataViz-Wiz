@@ -1,0 +1,13 @@
+.gBtn {
+    display: inline-block;
+    background: transparent;
+    color: #faf6f6;
+    width: 100%;
+    padding-top: unset;
+    padding-bottom: unset;
+    border-radius: unset;
+    border: 1px solid transparent;
+    font-size: 120%;
+    font-weight: bold;
+    font-family: Roboto;
+}

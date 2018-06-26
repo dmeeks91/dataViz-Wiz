@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { GoogleLogin } from 'react-google-login';
 import {Container} from "../../components/Grid";
-import FontAwesome from 'react-fontawesome';
+import GLogo from "../../components/GLogo";
+import "./Login.css";
 
 class Login extends Component {
   state = {
@@ -28,10 +29,18 @@ class Login extends Component {
                         clientId="354068819828-89tkvid8u657nkilofocsgj9pbg3nh99.apps.googleusercontent.com"
                         onSuccess={this.onLogin}
                         onFailure={this.onLogin}
-                    />
-                    <FontAwesome
-                        name='google'
-                    />
+                        className="gBtn"
+                    >
+                    <GLogo/>
+                        {/* <div className="row">
+                            <div className="col-sm-6">
+                                <FontAwesome name='google'/>
+                            </div>
+                            <div className="col-sm-6">
+                                <span>Login with Google</span>
+                            </div>
+                        </div> */}
+                    </GoogleLogin>
                     </div>
                 </div>
             </Container>
