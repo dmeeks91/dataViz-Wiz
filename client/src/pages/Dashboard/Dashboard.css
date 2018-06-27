@@ -1,13 +1,46 @@
 .container {
     text-align: center;
 }
+.col {
+    margin: 1%;
+}
+
+.row {
+    height: 50%;
+}
+
+.dashBtn {    
+    margin-top: 155px;
+}
 
 .dashImg {
     width: 100%;
 }
 
-.btnHolder {
-    width: 98%;
+.dashLink {
+    color: white;
+}
+
+#btnHolder {
+    text-align: center;
+    height: 780px;
+    width: 92%;
     margin: auto;
-    padding-top: 20%;
+    padding: unset;
+}
+
+.playCol {
+    background-color: #7a252a;
+}
+
+.learnCol {
+    background-color: #6d693a;
+}
+
+.statsCol {
+    background-color: #3c406f;
+}
+
+.logoutCol {
+    background-color: #3b6e5f;
 }

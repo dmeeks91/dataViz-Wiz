@@ -12,28 +12,31 @@ class Dashboard extends Component {
   
   render() {
     return (  
-        <div className="row btnHolder">
-            <div className="col">
-              <Link to="/play">
-                <img className="dashImg" alt="play" src="../images/Play.png"/>
+        <div className="container" id="btnHolder">
+          <div className="row">
+            <div className="col playCol">
+              <Link className="dashLink" to="/play">
+                <h1 className="dashBtn">PLAY</h1>
               </Link>
             </div>
-            <div className="col">
-              <Link to="/learn">
-                <img className="dashImg" alt="learn" src="../images/Learn.png"/>
+            <div className="col learnCol">
+              <Link className="dashLink" to="/learn">
+                <h1 className="dashBtn">LEARN</h1>
               </Link>
             </div>
-            <div className="w-100"></div>
-            <div className="col">
-              <Link to="/stats">
-                <img className="dashImg" alt="stats" src="../images/Stats.png"/>
+          </div>
+          <div className="row">
+            <div className="col statsCol">
+              <Link className="dashLink" to="/stats">
+                <h1 className="dashBtn">STATS</h1>
               </Link>
             </div>
-            <div className="col">
-              <Link to="/">
-                <img className="dashImg" alt="logout" src="../images/Logout.png"/>
+            <div className="col logoutCol">
+              <Link className="dashLink" to="/">
+                <h1 className="dashBtn">LOGOUT</h1>
               </Link>
             </div>
+          </div>
         </div>
     );
   }
