@@ -1,7 +1,7 @@
 import React from "react";
 
 const Nav = () => (
-  <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+  <nav id="navBar" className="navbar navbar-expand-lg navbar-dark bg-primary">
     <a className="navbar-brand" href="/">
       DataViz-Wiz
     </a>
