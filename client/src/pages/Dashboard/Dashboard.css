@@ -1,3 +1,13 @@
 .container {
     text-align: center;
 }
+
+.dashImg {
+    width: 100%;
+}
+
+.btnHolder {
+    width: 98%;
+    margin: auto;
+    padding-top: 20%;
+}
