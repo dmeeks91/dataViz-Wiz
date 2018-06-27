@@ -1,7 +1,7 @@
 import React from "react";
 
-export const Container = ({ fluid, height, children }) => (
-  <div style={{height: height}} className={`container${fluid ? "-fluid" : ""} row align-items-center`}>
+export const Container = ({ fluid, style, children }) => (
+  <div style={style} className={`container${fluid ? "-fluid" : ""} row align-items-center`}>
     {children}
   </div>
 );
