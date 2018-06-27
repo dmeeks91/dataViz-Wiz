@@ -51,6 +51,7 @@ class Learn extends Component {
               <Symbol key={symbol.id} 
                 name={symbol.name} 
                 url={symbol.filepath}
+                type="learnImg"
                 onClick = {()=>this.setModal(symbol)}/>
             )
           })}
