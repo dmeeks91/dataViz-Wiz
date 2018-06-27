@@ -2,7 +2,7 @@
 [
     {
         "id": "01",
-        "filepath": "/symbols/symbol01.png",
+        "filepath": "./symbols/symbol01.png",
         "name": "Bar",
         "description": "The classic Bar Chart uses either horizontal or vertical bars (column chart) to show discrete, numerical comparisons across categories. One axis of the chart shows the specific categories being compared and the other axis represents a discrete value scale.",
         "infoLink": "https://datavizcatalogue.com/methods/bar_chart.html"
