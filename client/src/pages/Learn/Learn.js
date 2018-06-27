@@ -8,6 +8,7 @@ import "./Learn.css";
 class Learn extends Component {
   state = {
     open: false,
+    height:400,
     symbol: {}
   };
 
@@ -22,7 +23,20 @@ class Learn extends Component {
     })
   };  
 
+  resizeContainer() {    
+    let sHeight = window.screen.height;
+    this.setState({
+      height: (window.screen.width < 500) ? sHeight * .90 : sHeight * 2
+    });
+  }
+
   componentDidMount() {      
+    this.resizeContainer();
+    window.addEventListener("resize", () => this.resizeContainer());
+  }
+
+  componentWillUnmount() {  
+    window.removeEventListener("resize", () => this.resizeContainer());
   }
   
   render() {
@@ -31,7 +45,7 @@ class Learn extends Component {
           symUrl =  (this.state.symbol) ? this.state.symbol.filepath :"",
           symDesc =  (this.state.symbol) ? this.state.symbol.description :"";
     return (  
-        <Container>
+        <Container height={this.state.height}>
           {symbols.map(symbol =>{
             return (
               <Symbol key={symbol.id} 
