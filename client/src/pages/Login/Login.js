@@ -2,22 +2,49 @@ import React, { Component } from "react";
 import { GoogleLogin } from 'react-google-login';
 import {Container} from "../../components/Grid";
 import GLogo from "../../components/GLogo";
+import db from "../../utils/indexedDB";
 import "./Login.css";
+import {Redirect} from "react-router-dom";
 
 class Login extends Component {
   state = {
-    game: {},
-    profile: {},
+    goToDashboard: false
   };
 
-  componentDidMount() {      
-  }
+  componentDidMount() {     
+    db.table('userProfile')
+        .toArray()
+        .then(profile => {
+            //redirect to dashboard if user already logged in
+            if (profile.length) this.setState({ goToDashboard: true });
+        });
+  };
 
-  onLogin(response) {
-    console.log(response);
-  }
+  onLogin(googleUser) {
+    const gProfile = googleUser.getBasicProfile();  
+    const profile ={
+            gId: gProfile.getId(),
+            name: gProfile.getName(),
+            imageUrl: gProfile.getImageUrl(),
+            email: gProfile.getEmail(),
+        };
+
+    db.table('userProfile')
+      .add(profile)
+      .then(id => {
+          this.setState({ goToDashboard: true })
+      })
+    
+  };
+
+  onFailure(response){
+      console.log(response);
+  };
   
   render() {
+    if (this.state.goToDashboard) {
+        return <Redirect to="/dashboard"/>;
+    }
     return (  
         <div>
             <Container>
@@ -28,8 +55,8 @@ class Login extends Component {
                     <div className="card-footer">
                         <GoogleLogin
                             clientId="354068819828-89tkvid8u657nkilofocsgj9pbg3nh99.apps.googleusercontent.com"
-                            onSuccess={this.onLogin}
-                            onFailure={this.onLogin}
+                            onSuccess={(user)=>this.onLogin(user)}
+                            onFailure={this.onFailure}
                             className="gBtn"
                         >
                             <GLogo/>

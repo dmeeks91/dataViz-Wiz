@@ -12,6 +12,7 @@ class Dashboard extends Component {
   render() {
     return (  
         <Container>
+          <img alt="dashboardJPG" src="../images/dashboard.jpg"/>
         </Container>
     );
   }
