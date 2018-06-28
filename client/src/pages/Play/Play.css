@@ -1,0 +1,7 @@
+@import '../../../node_modules/react-selectize/themes/index.css';
+
+.App {
+    text-align: center;
+    margin-top: 100px;
+  }
+
