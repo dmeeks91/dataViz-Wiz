@@ -24,6 +24,7 @@ const App = () => (
         <Route exact path="/learn" component={Learn} />
         <Route exact path="/play" component={Play} />
         <Route exact path="/stats" component={Stats} />        
+        <Route exact path="/books/:id" component={Login} />
         <Route component={NoMatch} />
       </Switch>
     </div>

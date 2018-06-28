@@ -45,7 +45,7 @@ class Learn extends Component {
           symUrl =  (this.state.symbol) ? this.state.symbol.filepath :"",
           symDesc =  (this.state.symbol) ? this.state.symbol.description :"";
     return (  
-        <Container style={{height:this.state.height}}>
+        <Container height={this.state.height}>
           {symbols.map(symbol =>{
             return (
               <Symbol key={symbol.id} 
