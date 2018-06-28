@@ -25,6 +25,7 @@ class Learn extends Component {
 
   resizeContainer() {    
     let sHeight = window.screen.height;
+    console.log(sHeight);
     this.setState({
       height: (window.screen.width < 500) ? sHeight * .90 : sHeight * 2
     });
@@ -45,7 +46,7 @@ class Learn extends Component {
           symUrl =  (this.state.symbol) ? this.state.symbol.filepath :"",
           symDesc =  (this.state.symbol) ? this.state.symbol.description :"";
     return (  
-        <Container height={this.state.height}>
+        <Container style={{height:this.state.height}}>
           {symbols.map(symbol =>{
             return (
               <Symbol key={symbol.id} 
