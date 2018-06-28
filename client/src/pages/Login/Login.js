@@ -29,10 +29,12 @@ class Login extends Component {
             email: gProfile.getEmail(),
         };
 
+    //add to IndexedDB
     db.table('userProfile')
       .add(profile)
       .then(id => {
           this.setState({ goToDashboard: true })
+          //add to mongoose ... findAndUpdate 
       })
     
   };
