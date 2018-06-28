@@ -5,6 +5,7 @@ import GLogo from "../../components/GLogo";
 import db from "../../utils/indexedDB";
 import "./Login.css";
 import {Redirect} from "react-router-dom";
+import { toast } from 'react-toastify';
 
 class Login extends Component {
   state = {
@@ -20,6 +21,8 @@ class Login extends Component {
         });
   };
 
+//   toastAlert = (msg,type) => {toast[type](msg)};
+  
   onLogin(googleUser) {
     const gProfile = googleUser.getBasicProfile();  
     const profile ={
@@ -33,7 +36,8 @@ class Login extends Component {
     db.table('userProfile')
       .add(profile)
       .then(id => {
-          this.setState({ goToDashboard: true })
+          toast.success(`Welcome, ${profile.name}`);
+          this.setState({ goToDashboard: true });
           //add to mongoose ... findAndUpdate 
       })
     

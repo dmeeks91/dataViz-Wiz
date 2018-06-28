@@ -6,6 +6,9 @@ import Play from "./pages/Play";
 import Stats from "./pages/Stats";
 import NoMatch from "./pages/NoMatch";
 import Nav from "./components/Nav";
+import { ToastContainer, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
 import {
   BrowserRouter as Router,
   Route,
@@ -18,6 +21,18 @@ const App = () => (
   <Router>
     <div>
       <Nav/>
+      <ToastContainer
+        position="top-center"
+        autoClose={false}
+        transition={Zoom}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnVisibilityChange
+        draggable={false}
+        pauseOnHover
+      />
       <Switch>
         <Route exact path="/" component={Login} />
         <Route exact path="/dashboard" component={Dashboard} />

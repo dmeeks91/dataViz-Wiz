@@ -1,10 +1,5 @@
 import React, { Component } from "react";
-import API from "../../utils/API";
-import { Link } from "react-router-dom";
-import { Col, Row, Container } from "../../components/Grid";
-import { List, ListItem } from "../../components/List";
-import { Input, TextArea, FormBtn } from "../../components/Form";
-import DeleteBtn from "../../components/DeleteBtn";
+import { Container } from "../../components/Grid";
 import Jumbotron from "../../components/Jumbotron";
 import db from "../../utils/indexedDB";
 
@@ -22,11 +17,6 @@ class Stats extends Component {
   //   this.setState({
   //     height: (window.screen.width < 500) ? sHeight * .90 : sHeight * 2
   //   });
-  // }
-
-  // componentDidMount() {      
-  //   this.resizeContainer();
-  //   window.addEventListener("resize", () => this.resizeContainer());
   // }
 
   // componentWillUnmount() {  
@@ -63,7 +53,7 @@ class Stats extends Component {
 
               <div className="row">
                 <div className="col-sm-2">
-              <img style={{width: 250}} src={this.state.imageUrl}/>
+              <img alt="userImage" style={{width: 250}} src={this.state.imageUrl}/>
                 </div>
                 <div className="col-sm-2"></div>
                 <div className="col-sm-8">
