@@ -1,15 +1,18 @@
 import React, { Component } from "react";
 import {Container} from "../../components/Grid";
+import {Redirect} from "react-router-dom";
 import symbols from "../../symbols.json";
 import Symbol from "../../components/Symbol";
 import Modal from "react-responsive-modal";
+import { db } from "../../utils";
 import "./Learn.css";
 
 class Learn extends Component {
   state = {
     open: false,
     height:400,
-    symbol: {}
+    symbol: {},
+    login: false
   };
 
   closeModal = () => {
@@ -31,9 +34,21 @@ class Learn extends Component {
     });
   }
 
-  componentDidMount() {      
-    this.resizeContainer();
-    window.addEventListener("resize", () => this.resizeContainer());
+  componentDidMount() { 
+    db.table('userProfile')
+        .toArray()
+        .then(profile => {
+            //redirect to login screen if not logged in
+            if (!profile.length) 
+            {
+              this.setState({ logIn: true });
+            }
+            else
+            {
+              this.resizeContainer();
+              window.addEventListener("resize", () => this.resizeContainer());
+            }
+        });       
   }
 
   componentWillUnmount() {  
@@ -41,11 +56,18 @@ class Learn extends Component {
   }
   
   render() {
+    //Redirect to Login page if not logged in
+    if (this.state.logIn) {
+        return <Redirect to="/"/>;
+    }
+    //Define Variables to be passed as props
     const { open } = this.state,
           symName =  (this.state.symbol) ? this.state.symbol.name :"",
           symUrl =  (this.state.symbol) ? this.state.symbol.filepath :"",
           symDesc =  (this.state.symbol) ? this.state.symbol.description :"";
-    return (  
+
+    //JSX of components to be returned by the render function
+    return (          
         <Container style={{height:this.state.height}}>
           {symbols.map(symbol =>{
             return (

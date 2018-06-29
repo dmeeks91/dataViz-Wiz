@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { GoogleLogin } from 'react-google-login';
 import {Container} from "../../components/Grid";
 import GLogo from "../../components/GLogo";
-import db from "../../utils/indexedDB";
+import { db } from "../../utils";
 import "./Login.css";
 import {Redirect} from "react-router-dom";
 import { toast } from 'react-toastify';
@@ -20,14 +20,14 @@ class Login extends Component {
             if (profile.length) this.setState({ goToDashboard: true });
         });
   };
-
-//   toastAlert = (msg,type) => {toast[type](msg)};
   
   onLogin(googleUser) {
     const gProfile = googleUser.getBasicProfile();  
     const profile ={
             gId: gProfile.getId(),
             name: gProfile.getName(),
+            firstName: gProfile.getGivenName(),
+            lastName: gProfile.getFamilyName(),
             imageUrl: gProfile.getImageUrl(),
             email: gProfile.getEmail(),
         };
@@ -36,7 +36,7 @@ class Login extends Component {
     db.table('userProfile')
       .add(profile)
       .then(id => {
-          toast.success(`Welcome, ${profile.name}`);
+          toast.success(`Welcome, ${profile.firstName}`);
           this.setState({ goToDashboard: true });
           //add to mongoose ... findAndUpdate 
       })
