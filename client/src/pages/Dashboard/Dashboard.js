@@ -1,15 +1,21 @@
 import React, { Component } from "react";
-import {Redirect} from "react-router-dom";
-import { Link } from 'react-router-dom';
-import db from "../../utils/indexedDB";
+import {Redirect, Link} from "react-router-dom";
+import { db } from "../../utils";
 import "./Dashboard.css";
 
 class Dashboard extends Component {
   state = {
-    logOut: false
+    logOut: false,
+    logIn: false,
   };
 
-  componentDidMount() {      
+  componentDidMount() {  
+    db.table('userProfile')
+        .toArray()
+        .then(profile => {
+            //redirect to login screen if not logged in
+            if (!profile.length) this.setState({ logIn: true });
+        });    
   };
 
   logOut(){
@@ -21,7 +27,7 @@ class Dashboard extends Component {
   };
 
   render() {
-    if (this.state.logOut) {
+    if (this.state.logOut || this.state.logIn) {
         return <Redirect to="/"/>;
     }
     return (  
@@ -44,10 +50,8 @@ class Dashboard extends Component {
                 <h1 className="dashBtn">STATS</h1>
               </Link>
             </div>
-            <div className="col logoutCol">
-              {/* <Link className="dashLink" to="/"> */}
-                <h1 className="dashBtn" onClick={()=>this.logOut()}>LOGOUT</h1>
-              {/* </Link> */}
+            <div className="col logoutCol" onClick={()=>this.logOut()}>
+                <h1 className="dashBtn">LOGOUT</h1>
             </div>
           </div>
         </div>
