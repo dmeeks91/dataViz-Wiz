@@ -5,20 +5,25 @@ import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
 import symbolList from "../../symbols.json"
 import Modal from "react-responsive-modal";
-import { SimpleSelect } from "react-selectize";
 import { toast } from 'react-toastify';
+import { FormGroup, FormControl} from "react-bootstrap";
 import "./Play.css";
+
+//Trying to get this bootsrtap-select to work
+//But it isn't working because JQuery is not defined
+//https://github.com/tjwebb/react-bootstrap-select
+// React.Bootstrap = require('react-bootstrap');
+// React.Bootstrap.Select = require('react-bootstrap-select');
 
 class Play extends Component {
   state = {
     symbols: {sym1:[],sym2:[]},
     guesses: [],
+    guessString: 0,
     height: 0,
     login: false,
     open: false,
     matches: [],
-    selectedValue: {},
-    search:{}
   };
 
   alert = (match) => {
@@ -117,6 +122,12 @@ class Play extends Component {
     if (action === "add") this.checkIfMatch();
   }
 
+  handleChange(e) {
+    console.log(`value: ${e.target.value}`);
+    this.closeModal();
+    // this.setState({ value: e.target.value });
+  }
+
   handleName = ( {id} ) => {
     let guess = this.state.guesses[0];
     console.log((guess === id) ? "Name matches guess" : "Toastr: Try again")
@@ -135,13 +146,19 @@ class Play extends Component {
         return <Redirect to="/"/>;
     }
     
+    // //Define Variables to be passed as props
+    // const options = symbolList.map(function(symbol){
+    //     return {label: symbol.name, value: symbol.id}
+    // });
+    
     //Define Variables to be passed as props
-    const options = symbolList.map(function(symbol){
-        return {label: symbol.name, value: symbol.id}
-    });
-
-    //Define Variables to be passed as props
-    const { open, symbols } = this.state;  
+    const { open, symbols } = this.state
+    // sym1.slice(3,6).map(symbol => {
+    //   symbol.boardID = `rw2_${symbol.id}`;
+    //   symbol.onClick = () => this.handleGuess(symbol.boardID, symbol.id);
+    //   return symbol;
+    // })
+    //console.log(arry);
 
     //JSX of components to be returned by the render function
     return (  
@@ -172,13 +189,31 @@ class Play extends Component {
             />
           )}
         )}
-        <Modal open={open} onClose={this.closeModal} center>
+        <Modal open={open} center showCloseIcon={false}
+          onClose={this.closeModal} >
           <div className="card">
             <div className="card-header">
               <h1 className="title">Select Viz Name</h1>
             </div>
-            <div className="card-body">             
-              <SimpleSelect options = {options}></SimpleSelect>                   
+            <div className="card-body">  
+              <FormGroup controlId="formControlsSelect">
+                <FormControl componentClass="select" 
+                  placeholder="select"                  
+                  onChange={(e)=>this.handleChange(e)}
+                >
+                  <option key={0} value=""></option>
+                  {symbolList.map(symbol => {
+                    return (
+                      <option 
+                        key = {symbol.id}
+                        value={symbol.id}
+                      >
+                        {symbol.name}
+                      </option>
+                    )
+                  })}
+                </FormControl>
+              </FormGroup>
             </div>
           </div>
         </Modal>
