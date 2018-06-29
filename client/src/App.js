@@ -2,7 +2,7 @@ import React from "react";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Learn from "./pages/Learn";
-import Play from "./pages/Play";
+import Play from "./pages/Play2";
 import Stats from "./pages/Stats";
 import NoMatch from "./pages/NoMatch";
 import Nav from "./components/Nav";
@@ -23,7 +23,7 @@ const App = () => (
       <Nav/>
       <ToastContainer
         position="top-center"
-        autoClose={2500}
+        autoClose={1500}
         transition={Zoom}
         hideProgressBar
         newestOnTop

@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { db, board }from "../../utils";
 import {Container} from "../../components/Grid";
 import {Redirect} from "react-router-dom";
-import Symbol from "../../components/Symbol";
+import GameBoard from "../../components/GameBoard";
 import symbolList from "../../symbols.json"
 import Modal from "react-responsive-modal";
-import { SimpleSelect } from "react-selectize";
 import { toast } from 'react-toastify';
+import { FormGroup, FormControl} from "react-bootstrap";
 import "./Play.css";
 
 class Play extends Component {
@@ -18,7 +18,8 @@ class Play extends Component {
     open: false,
     matches: [],
     selectedValue: {},
-    search:{}
+    search:{},
+    style: {}
   };
 
   alert = (match) => {
@@ -83,6 +84,10 @@ class Play extends Component {
     );
   }  
 
+  handleChange(e) {
+    this.setState({ value: e.target.value });
+  }
+
   handleGuess = (boardID, symbolID) => {
     let guesses = this.state.guesses, action;    
     const selected = this.isSelected(boardID);
@@ -123,9 +128,10 @@ class Play extends Component {
     this.closeModal();
   }
   
-  resizeContainer() {    
+  resizeContainer() { 
+    const navHeight = document.getElementById("navBar").offsetHeight;
     this.setState({
-      height: window.innerHeight * .90
+      style: { height: window.innerHeight - navHeight, paddingTop: navHeight/2}
     });
   }
 
@@ -141,44 +147,46 @@ class Play extends Component {
     });
 
     //Define Variables to be passed as props
-    const { open, symbols } = this.state;  
-
+    const { open } = this.state,  {sym1, sym2} = this.state.symbols
     //JSX of components to be returned by the render function
     return (  
-      <Container style={{height:this.state.height}}>
-        {symbols.sym1.map(symbol =>{ 
-          const boardID = `sym1_${symbol.id}`;
-          return (
-            <Symbol
-                key = {boardID}
-                id = {boardID}  
-                name={symbol.name}
-                url={symbol.filepath}
-                type="playImg"
-                onClick = { () => this.handleGuess(boardID, symbol.id) }
-            />
-          )}
-        )}
-        {symbols.sym2.map(symbol => { 
-          const boardID = `sym2_${symbol.id}`;
-          return (
-            <Symbol
-                key = {boardID}
-                id = {boardID}  
-                name={symbol.name}
-                url={symbol.filepath}
-                type="playImg"
-                onClick = { () => this.handleGuess(boardID, symbol.id) }
-            />
-          )}
-        )}
+      <Container style={this.state.style}>
+        <GameBoard 
+          row1 = {sym1.slice(0,3).map(symbol1 => {
+            symbol1.boardID = `rw1_${symbol1.id}`;
+            symbol1.onClick = () => this.handleGuess(symbol1.boardID, symbol1.id);
+            return symbol1;
+          })}
+          row2 = {sym1.slice(3,6).map(symbol2 => {
+            symbol2.boardID = `rw2_${symbol2.id}`;
+            symbol2.onClick = () => this.handleGuess(symbol2.boardID, symbol2.id);
+            return symbol2;
+          })}
+          row3 = {sym2.slice(0,3).map(symbol3 => {
+            symbol3.boardID = `rw3_${symbol3.id}`;
+            symbol3.onClick = () => this.handleGuess(symbol3.boardID, symbol3.id);
+            return symbol3;
+          })}
+          row4 = {sym2.slice(3,6).map(symbol4 => {
+            symbol4.boardID = `rw4_${symbol4.id}`;
+            symbol4.onClick = () => this.handleGuess(symbol4.boardID, symbol4.id);
+            return symbol4;
+          })}
+          style={this.state.style}
+        />        
         <Modal open={open} onClose={this.closeModal} center>
           <div className="card">
             <div className="card-header">
               <h1 className="title">Select Viz Name</h1>
             </div>
             <div className="card-body">             
-              <SimpleSelect options = {options}></SimpleSelect>                   
+            <FormGroup controlId="formControlsSelect">
+              <FormControl componentClass="select" 
+                placeholder="select"
+                options={options}
+                onChange={this.handleChange}
+              />
+            </FormGroup>
             </div>
           </div>
         </Modal>

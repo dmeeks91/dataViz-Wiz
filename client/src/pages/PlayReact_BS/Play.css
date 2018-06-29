@@ -1,0 +1,26 @@
+@import '../../../node_modules/react-selectize/themes/index.css';
+
+.App {
+    text-align: center;
+    margin-top: 100px;
+  }
+
+.playImg {
+  width: 80%;
+  max-width: unset;
+}
+
+.selected {
+  border: 1px solid #eb6864;
+  box-shadow: 2px 5px 2px #afaeaead, -2px -4px #eb6864;
+}
+
+@media only screen and (max-width:450px){
+    .playImg {max-width: 100px;}
+    .col-xs-4 {width: 33%;}
+}
+
+@media only screen and (max-height:450px){
+  .playImg {max-width: 90px;}
+  .col-xs-4 {width: 25%;}
+}
