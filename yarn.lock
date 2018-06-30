@@ -1458,16 +1458,6 @@ posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
 
-prelude-extension@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/prelude-extension/-/prelude-extension-0.0.13.tgz#1d3fe41cb7578d8dbefc865efddd28d88c9a03a8"
-  dependencies:
-    prelude-ls "^1.1.2"
-
-prelude-ls@^1.1.1, prelude-ls@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
-
 prepend-http@^1.0.1:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
@@ -1537,14 +1527,6 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
-
-react-selectize-bs@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/react-selectize-bs/-/react-selectize-bs-2.1.1.tgz#5beabdce30e79bbc56d8d89217af4e9ca57dd341"
-  dependencies:
-    prelude-extension "^0.0.13"
-    prelude-ls "^1.1.1"
-    tether "^1.1.1"
 
 readable-stream@^2.0.2, readable-stream@^2.0.6:
   version "2.3.6"
@@ -1926,10 +1908,6 @@ term-size@^1.2.0:
   resolved "https://registry.yarnpkg.com/term-size/-/term-size-1.2.0.tgz#458b83887f288fc56d6fffbfad262e26638efa69"
   dependencies:
     execa "^0.7.0"
-
-tether@^1.1.1:
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/tether/-/tether-1.4.4.tgz#9dc6eb2b3e601da2098fd264e7f7a8b264de1125"
 
 through@2, through@~2.3, through@~2.3.1:
   version "2.3.8"

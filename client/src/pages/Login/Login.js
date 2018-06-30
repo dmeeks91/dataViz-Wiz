@@ -8,6 +8,8 @@ import {Redirect} from "react-router-dom";
 import { toast } from 'react-toastify';
 import API from "../../utils/API";
 
+
+
 class Login extends Component {
   state = {
     goToDashboard: false
@@ -25,7 +27,7 @@ class Login extends Component {
   onLogin(googleUser) {
     const gProfile = googleUser.getBasicProfile();  
     const profile ={
-            gId: gProfile.getId(),
+            gID: gProfile.getId(),
             name: gProfile.getName(),
             firstName: gProfile.getGivenName(),
             lastName: gProfile.getFamilyName(),
@@ -34,15 +36,20 @@ class Login extends Component {
             id: 1
         };
 
-    //add to IndexedDB
-    db.table('userProfile')
-      .add(profile)
-      .then(id => {
-          toast.success(`Welcome, ${profile.firstName}`);
-          this.setState({ goToDashboard: true });
-          //add to mongoose ... findAndUpdate
-      })
-    
+    API.saveUser(profile)
+    .then(e => {
+        profile.id = e.data._id;
+        db.table('userProfile')
+            .add(profile)
+            .then(id => {
+                toast.success(`Welcome, ${profile.firstName}`);
+                this.setState({ goToDashboard: true });
+                //add to mongoose ... findAndUpdate 
+            })
+        console.log(e)
+    })
+    .catch(err => console.log(err));
+
   };
 
   onFailure(response){
