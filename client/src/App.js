@@ -2,7 +2,7 @@ import React from "react";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Learn from "./pages/Learn";
-import Play from "./pages/Play2";
+import Play from "./pages/Play3";
 import Stats from "./pages/Stats";
 import NoMatch from "./pages/NoMatch";
 import Nav from "./components/Nav";

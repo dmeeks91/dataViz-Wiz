@@ -5,6 +5,11 @@ export class board {
         const sym1 = [], sym2 = [];
         let match = {};
 
+        //Reevaluate .... generate random symbol not in matches array 
+        //and push to both arrays to prevent infinite loop
+        //if matches.length === symbols.length clear the matches array 
+        //(pass a function from parent component in order to clear state) 
+
         //generate a random symbol & push if unique until sym1 has 6 symbols 
         do { 
             const random1 = this.pickRandom(symbols);
@@ -14,25 +19,37 @@ export class board {
         //randomly pick one symbol from sym1 and push to sym2
         do {
             const random2 = this.pickRandom(sym1);
-            if (matches.indexOf(random2)===-1) sym2.push(random2);
+            if (matches.indexOf(random2)===-1) 
+            {
+                sym2.push(random2);
+                match = random2;
+            }
         } while (sym2.length < 1);
         
         //generate a random symbol & push if unique until sym2 has 6 symbols
         do {  
             const random3 = this.pickRandom(symbols);
-            if (sym1.indexOf(random3) === -1 && sym2.indexOf(random3) === -1) 
-            {
-                sym2.push(random3);
-                match = random3;
-            }
+            if (sym1.indexOf(random3) === -1 && sym2.indexOf(random3) === -1) sym2.push(random3);
+            
         } while (sym2.length < 6);
         
         return {
-            sym1,
-            //shuffle array otherwise match will always be first item in sym2
+            //shuffle array otherwise match will always be first item 
+            sym1: this.shuffleArray(sym1),            
             sym2: this.shuffleArray(sym2),
             match
         };
+    };
+
+    getAnswers(match, others){
+        //generate array with the match and 7 other randomly selected symbols
+        const array = [match];
+        do { 
+            const random = this.pickRandom(others);
+            if (array.indexOf(random)===-1) array.push(random);
+        } while (array.length < 8);
+
+        return this.shuffleArray(array);
     };
 
     pickRandom(arr){

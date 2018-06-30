@@ -3,27 +3,22 @@ import { db, board }from "../../utils";
 import {Container} from "../../components/Grid";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
-import symbolList from "../../symbols.json"
 import Modal from "react-responsive-modal";
 import { toast } from 'react-toastify';
-import { FormGroup, FormControl} from "react-bootstrap";
+import { Row, Button } from "react-bootstrap";
 import "./Play.css";
-
-//Trying to get this bootsrtap-select to work
-//But it isn't working because JQuery is not defined
-//https://github.com/tjwebb/react-bootstrap-select
-// React.Bootstrap = require('react-bootstrap');
-// React.Bootstrap.Select = require('react-bootstrap-select');
 
 class Play extends Component {
   state = {
-    symbols: {sym1:[],sym2:[]},
+    board: new board(),
     guesses: [],
-    guessString: 0,
+    guessString: "",
     height: 0,
     login: false,
-    open: false,
     matches: [],
+    open: false,
+    round: 1,
+    symbols: {sym1:[],sym2:[]},
   };
 
   alert = (match) => {
@@ -33,7 +28,8 @@ class Play extends Component {
     {      
       this.setState({
         open: true,
-      })
+      });
+      this.getAnswerArray();
     }
     else if (!document.getElementsByClassName("Toastify__toast Toastify__toast--error").length) 
     {      
@@ -63,14 +59,9 @@ class Play extends Component {
             {
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
-              const thisBoard = new board();
-              const {match, ...symbols} = thisBoard.getSymbols(this.state.matches);
-              this.setState({
-                symbols,
-                matches: [...this.state.matches, match]
-              });
+              this.startNewGame();
             }
-        });    
+        });  
   };
 
   componentWillUnmount() {  
@@ -88,7 +79,16 @@ class Play extends Component {
     );
   }  
 
-  handleGuess = (boardID, symbolID) => {
+  getAnswerArray = () => {
+    const { matches } = this.state, {sym1, sym2} = this.state.symbols;
+    if (!matches.length) return [];
+    const match = matches[matches.length-1];
+    const others = [...sym1, ...sym2].filter(symbol => symbol.id !== match.id);
+
+    return this.state.board.getAnswers(match, others);
+  }
+
+  clickSymbol = (boardID, symbolID) => {
     let guesses = this.state.guesses, action;    
     const selected = this.isSelected(boardID);
     if (!selected && guesses.length < 2)
@@ -122,16 +122,34 @@ class Play extends Component {
     if (action === "add") this.checkIfMatch();
   }
 
-  handleChange(e) {
-    console.log(`value: ${e.target.value}`);
-    this.closeModal();
-    // this.setState({ value: e.target.value });
+  getIDBTable = (store) => {
+    return new Promise((resolve, reject) => {
+      db.table(store)
+        .toArray()
+        .then((data) => resolve(data[0]));
+    });
   }
 
-  handleName = ( {id} ) => {
-    let guess = this.state.guesses[0];
-    console.log((guess === id) ? "Name matches guess" : "Toastr: Try again")
-    this.closeModal();
+  guessName = ({id, name}) => {    
+    const { round, matches } = this.state;
+    const match = matches[matches.length-1];
+
+    this.getIDBTable("game")
+        .then((game) => {
+          if (!game.rounds[round]) game.rounds[round] = [];
+
+          const newGuess =  {correct: match.name, guess: name};
+
+          game.rounds[round].push(newGuess);
+          db.table("game").update(1, {rounds: game.rounds});
+        });
+
+    if (match.id === id)
+    {
+      this.closeModal();
+      this.setBoard();
+    }
+    
   }
   
   resizeContainer() {    
@@ -146,25 +164,23 @@ class Play extends Component {
         return <Redirect to="/"/>;
     }
     
-    // //Define Variables to be passed as props
-    const options = symbolList.map(symbol => {
-      return (
-        <option 
-          key = {symbol.id}
-          value={symbol.id}
-        >
-          {symbol.name}
-        </option>
-      )
-    })
-    
-    //Define Variables to be passed as props
-    const { open, symbols } = this.state
+    // //Define Variables to be passed as props    
+    const { open} = this.state,  
+          {sym1, sym2} = this.state.symbols,
+          buttons = this.getAnswerArray().map(symbol =>{
+            return (
+              <Button className="col-sm-2" 
+                bsStyle="primary" key={symbol.id}
+                block
+                onClick={()=>this.guessName(symbol)}
+              >{symbol.name}</Button>
+            )
+          });
     
     //JSX of components to be returned by the render function
     return (  
       <Container style={{height:this.state.height}}>
-        {symbols.sym1.map(symbol =>{ 
+        {sym1.map(symbol =>{ 
           const boardID = `sym1_${symbol.id}`;
           return (
             <Symbol
@@ -173,11 +189,11 @@ class Play extends Component {
                 name={symbol.name}
                 url={symbol.filepath}
                 type="playImg"
-                onClick = { () => this.handleGuess(boardID, symbol.id) }
+                onClick = { () => this.clickSymbol(boardID, symbol.id) }
             />
           )}
         )}
-        {symbols.sym2.map(symbol => { 
+        {sym2.map(symbol => { 
           const boardID = `sym2_${symbol.id}`;
           return (
             <Symbol
@@ -186,30 +202,43 @@ class Play extends Component {
                 name={symbol.name}
                 url={symbol.filepath}
                 type="playImg"
-                onClick = { () => this.handleGuess(boardID, symbol.id) }
+                onClick = { () => this.clickSymbol(boardID, symbol.id) }
             />
           )}
         )}
         <Modal open={open} center showCloseIcon={false}
-          onClose={this.closeModal} >
+          onClose={this.closeModal} closeOnOverlayClick={false} >
           <div className="card">
             <div className="card-header">
-              <h1 className="title">Select Viz Name</h1>
+              <h1 id="modalTitle" className="title">Select Viz Name</h1>
             </div>
             <div className="card-body">  
-              <FormGroup controlId="formControlsSelect">
-                <FormControl componentClass="select" 
-                  placeholder="select"                  
-                  onChange={(e)=>this.handleChange(e)}
-                >
-                  {options}
-                </FormControl>
-              </FormGroup>
+              <Row>
+                {buttons}
+              </Row>
             </div>
           </div>
         </Modal>
       </Container>
     );
+  }
+
+  setBoard() {    
+    const {match, ...symbols} = this.state.board.getSymbols(this.state.matches);
+    this.setState({
+      symbols,
+      guesses: [],
+      matches: [...this.state.matches, match]
+    });
+  }
+
+  startNewGame() {    
+    db.table('game').clear();
+    db.table('game')
+      .add({id:1, rounds:{}})
+      .then(()=>{
+        this.setBoard();
+      })
   }
 }
 
