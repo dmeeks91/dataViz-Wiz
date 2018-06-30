@@ -153,8 +153,9 @@ class Play extends Component {
       <Container style={this.state.style}>
         <GameBoard 
           row1 = {sym1.slice(0,3).map(symbol1 => {
-            symbol1.boardID = `rw1_${symbol1.id}`;
-            symbol1.onClick = () => this.handleGuess(symbol1.boardID, symbol1.id);
+            const sym = Object.assign({}, symbol1);
+            sym.boardID = `rw1_${symbol1.id}`;
+            sym.onClick = () => this.handleGuess(symbol1.boardID, symbol1.id);
             return symbol1;
           })}
           row2 = {sym1.slice(3,6).map(symbol2 => {

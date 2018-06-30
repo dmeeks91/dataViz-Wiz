@@ -16,5 +16,9 @@ export const API = {
   // Saves a book to the database
   saveBook: function(bookData) {
     return axios.post("/api/books", bookData);
+  },
+  // Saves a book to the database
+  saveUser: function(profile) {
+    return axios.post("/api/users", profile);
   }
 };

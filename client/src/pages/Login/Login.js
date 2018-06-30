@@ -6,6 +6,7 @@ import { db } from "../../utils";
 import "./Login.css";
 import {Redirect} from "react-router-dom";
 import { toast } from 'react-toastify';
+import API from "../../utils/API";
 
 class Login extends Component {
   state = {
@@ -39,7 +40,7 @@ class Login extends Component {
       .then(id => {
           toast.success(`Welcome, ${profile.firstName}`);
           this.setState({ goToDashboard: true });
-          //add to mongoose ... findAndUpdate 
+          //add to mongoose ... findAndUpdate
       })
     
   };

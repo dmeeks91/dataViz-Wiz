@@ -147,6 +147,8 @@ class Play extends Component {
     if (match.id === id)
     {
       this.closeModal();
+      this.state.guesses
+          .forEach(({ boardID, symbolID }) => this.clickSymbol(boardID, symbolID));
       this.setBoard();
     }
     
