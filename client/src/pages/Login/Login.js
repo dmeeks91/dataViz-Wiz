@@ -30,6 +30,7 @@ class Login extends Component {
             lastName: gProfile.getFamilyName(),
             imageUrl: gProfile.getImageUrl(),
             email: gProfile.getEmail(),
+            id: 1
         };
 
     //add to IndexedDB
