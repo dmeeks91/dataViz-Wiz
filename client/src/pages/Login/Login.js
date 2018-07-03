@@ -45,8 +45,7 @@ class Login extends Component {
                 toast.success(`Welcome, ${profile.firstName}`);
                 this.setState({ goToDashboard: true });
                 //add to mongoose ... findAndUpdate 
-            })
-        console.log(e)
+            }).catch(err => console.log(err));
     })
     .catch(err => console.log(err));
 

@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const games = new Schema({
-  closed: { type: Boolean, required: true },
-  win: { type: String, required: true },
-  lose: { type: String, required: true },
+  closed: { type: Boolean, default: false },
+  win: { type: String},
+  lose: { type: String},
   rounds: {type: Array}
 });
 

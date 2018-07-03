@@ -7,6 +7,7 @@ import Modal from "react-responsive-modal";
 import { toast } from 'react-toastify';
 import { Row, Button } from "react-bootstrap";
 import "./Play.css";
+import API from "../../utils/API";
 
 class Play extends Component {
   state = {
@@ -19,6 +20,8 @@ class Play extends Component {
     open: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
+    userID: "",
+    gameID: ""
   };
 
   alert = (match) => {
@@ -57,6 +60,7 @@ class Play extends Component {
             }
             else
             {
+              this.setState({userID: profile.id})
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
               this.startNewGame();
@@ -141,7 +145,7 @@ class Play extends Component {
           const newGuess =  {correct: match.name, guess: name};
 
           game.rounds[round].push(newGuess);
-          db.table("game").update(1, {rounds: game.rounds});
+          db.table("game").update(this.state.gameID, {rounds: game.rounds});
         });
 
     if (match.id === id)
@@ -234,13 +238,18 @@ class Play extends Component {
     });
   }
 
-  startNewGame() {    
+  startNewGame() { 
+    API.newGame()
+    .then( ({data}) => {
+      console.log(data)
     db.table('game').clear();
     db.table('game')
-      .add({id:1, rounds:{}})
+      .add({id: data._id, rounds:{}})
       .then(()=>{
+        this.setState({gameID: data._id});
         this.setBoard();
       })
+    })
   }
 }
 

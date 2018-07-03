@@ -5,6 +5,9 @@ export default  {
   saveUser: function(userID) {
     console.log(userID)
     return axios.post("/api/user", userID);
+  },
+  newGame: function() {
+  return axios.post("/api/newgame")
   }
 
 };
