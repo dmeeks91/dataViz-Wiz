@@ -16,9 +16,9 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
 
-  create: function(req, res) {
-    db.Player
-      .create(req.body)
+  newGame: function(req, res) {
+    db.Game
+      .create({closed: false})
       .then(dbModel => {
       res.json(dbModel)})
       .catch(err => res.status(422).json(err));
