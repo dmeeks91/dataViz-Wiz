@@ -140,10 +140,13 @@ class Play extends Component {
 
     this.getIDBTable("game")
         .then((game) => {
+          //Initialize round array if it doesn't already exist
           if (!game.rounds[round]) game.rounds[round] = [];
 
+          //Create New guess
           const newGuess =  {correct: match.name, guess: name};
 
+          //Push new guess to array
           game.rounds[round].push(newGuess);
           db.table("game").update(this.state.gameID, {rounds: game.rounds});
         });
