@@ -279,7 +279,6 @@ class Play extends Component {
         })
 
     //If round index < 5 start new Round else end game
-    
   }
 }
 
