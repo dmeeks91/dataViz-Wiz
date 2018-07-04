@@ -6,6 +6,7 @@ export class board {
         let match = {};
 
         //Reevaluate .... generate random symbol not in matches array 
+        //Object.assign({},this.pickRandom(symbols)) ==> Prevent unintentional link (Play Page)
         //and push to both arrays to prevent infinite loop
         //if matches.length === symbols.length clear the matches array 
         //(pass a function from parent component in order to clear state) 
@@ -21,7 +22,7 @@ export class board {
             const random2 = this.pickRandom(sym1);
             if (matches.indexOf(random2)===-1) 
             {
-                sym2.push(random2);
+                sym2.push(Object.assign({},random2));
                 match = random2;
             }
         } while (sym2.length < 1);
