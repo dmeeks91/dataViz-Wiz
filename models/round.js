@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const rounds = new Schema({
-  playerid: { type: String, required: true },
-  gameid: { type: String, required: true },
+  playerID: { type: String, required: true },
+  gameID: { type: String, required: true },
   index: { type: Number, required: true },
   guesses: {type: Array, required: true}
 });

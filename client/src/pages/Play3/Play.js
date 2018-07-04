@@ -20,7 +20,7 @@ class Play extends Component {
     open: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
-    userID: "",
+    playerID: "",
     gameID: ""
   };
 
@@ -60,7 +60,7 @@ class Play extends Component {
             }
             else
             {
-              this.setState({userID: profile.id})
+              this.setState({playerID: profile[0].id})
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
               this.startNewGame();
@@ -135,20 +135,30 @@ class Play extends Component {
   }
 
   guessName = ({id, name}) => {    
-    const { round, matches } = this.state;
+    const { round, matches, gameID, playerID } = this.state;
     const match = matches[matches.length-1];
 
     this.getIDBTable("game")
         .then((game) => {
           //Initialize round array if it doesn't already exist
-          if (!game.rounds[round]) game.rounds[round] = [];
+          if (game.rounds.length !== round) {
+            //pushes last round to mongo
+            if ( round > 1) this.timeUp();
+            game.rounds.push({
+              gameID,
+              playerID,
+              guesses: []
+            });
+          }
 
           //Create New guess
           const newGuess =  {correct: match.name, guess: name};
 
           //Push new guess to array
-          game.rounds[round].push(newGuess);
-          db.table("game").update(this.state.gameID, {rounds: game.rounds});
+          game.rounds[round - 1].guesses.push(newGuess);
+
+          //Update current game object in indexedDB
+          db.table("game").update(1, {rounds: game.rounds});
         });
 
     if (match.id === id)
@@ -244,15 +254,32 @@ class Play extends Component {
   startNewGame() { 
     API.newGame()
     .then( ({data}) => {
-      console.log(data)
-    db.table('game').clear();
-    db.table('game')
-      .add({id: data._id, rounds:{}})
-      .then(()=>{
-        this.setState({gameID: data._id});
-        this.setBoard();
-      })
+      db.table('game').clear();
+      db.table('game')
+        .add({id:1, rounds:[]})
+        .then(()=>{
+          this.setState({gameID: data._id});
+          this.setBoard();
+        })
     })
+  }
+
+  timeUp() {
+    //increase round index 
+
+    //push most recent round to mongoDB
+    this.getIDBTable("game")
+        .then(({rounds})=>{
+          const index = rounds.length-1;
+          const round = rounds[index];
+          round.index = index;
+          API.saveRound(round)
+             .then(data => console.log(data))
+             .catch(e => console.log(e));
+        })
+
+    //If round index < 5 start new Round else end game
+    
   }
 }
 

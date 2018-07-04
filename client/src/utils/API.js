@@ -7,7 +7,8 @@ export default  {
     return axios.post("/api/user", userID);
   },
   newGame: function() {
-  return axios.post("/api/newgame")
-  }
+  return axios.post("/api/new-game")
+  },
+  saveRound: (round) => axios.post("/api/save-round", round)
 
 };
