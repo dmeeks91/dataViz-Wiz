@@ -25,9 +25,9 @@ module.exports = {
   },
 
   saveRound:function(req, res) {
-    const {playerID, gameID} = req.body;
+    const {playerID, gameID, index} = req.body;
     db.Round
-      .findOneAndUpdate({ playerID, gameID }, req.body, {upsert: true, returnNewDocument: true})
+      .findOneAndUpdate({ playerID, gameID, index }, req.body, {upsert: true, returnNewDocument: true})
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },

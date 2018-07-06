@@ -5,11 +5,22 @@ export class board {
         const sym1 = [], sym2 = [];
         let match = {};
 
-        //Reevaluate .... generate random symbol not in matches array 
-        //Object.assign({},this.pickRandom(symbols)) ==> Prevent unintentional link (Play Page)
-        //and push to both arrays to prevent infinite loop
-        //if matches.length === symbols.length clear the matches array 
-        //(pass a function from parent component in order to clear state) 
+        //Pick random symbol that is not in the matches array and add it to each array
+        do {
+            const random = this.pickRandom(symbols);
+            if (matches.indexOf(random)===-1) 
+            {
+                //Object.assign({},this.pickRandom(symbols)) ==> Prevent unintentional link (Play Page)
+                sym1.push(random);
+                sym2.push(Object.assign({},random));
+                match = random;
+            }
+            if (matches.length === symbols.length)
+            {
+                //if matches.length === symbols.length clear the matches array
+                //(pass a function from parent component in order to clear state) 
+            }
+        } while (sym1.length < 1 && sym2.length < 1);
 
         //generate a random symbol & push if unique until sym1 has 6 symbols 
         do { 
@@ -17,20 +28,10 @@ export class board {
             if (sym1.indexOf(random1)===-1) sym1.push(random1);
         } while (sym1.length < 6);
 
-        //randomly pick one symbol from sym1 and push to sym2
-        do {
-            const random2 = this.pickRandom(sym1);
-            if (matches.indexOf(random2)===-1) 
-            {
-                sym2.push(Object.assign({},random2));
-                match = random2;
-            }
-        } while (sym2.length < 1);
-        
         //generate a random symbol & push if unique until sym2 has 6 symbols
         do {  
-            const random3 = this.pickRandom(symbols);
-            if (sym1.indexOf(random3) === -1 && sym2.indexOf(random3) === -1) sym2.push(random3);
+            const random2 = this.pickRandom(symbols);
+            if (sym1.indexOf(random2) === -1 && sym2.indexOf(random2) === -1) sym2.push(random2);
             
         } while (sym2.length < 6);
         

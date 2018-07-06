@@ -12,6 +12,7 @@ import API from "../../utils/API";
 class Play extends Component {
   state = {
     board: new board(),
+    buttons: [],
     guesses: [],
     guessString: "",
     height: 0,
@@ -32,7 +33,7 @@ class Play extends Component {
       this.setState({
         open: true,
       });
-      this.getAnswerArray();
+      this.getButtons();
     }
     else if (!document.getElementsByClassName("Toastify__toast Toastify__toast--error").length) 
     {      
@@ -90,6 +91,20 @@ class Play extends Component {
     const others = [...sym1, ...sym2].filter(symbol => symbol.id !== match.id);
 
     return this.state.board.getAnswers(match, others);
+  }
+
+  getButtons = () => {
+    const buttons = this.getAnswerArray().map(symbol =>{
+      return (
+        <Button className="col-sm-2" 
+          bsStyle="primary" key={symbol.id}
+          block
+          onClick={()=>this.guessName(symbol)}
+        >{symbol.name}</Button>
+      )
+    });
+
+    this.setState({buttons});
   }
 
   clickSymbol = (boardID, symbolID) => {
@@ -171,6 +186,19 @@ class Play extends Component {
     
   }
   
+  pushRoundToMongo = () => {
+    //push most recent round to mongoDB
+    this.getIDBTable("game")
+        .then(({rounds})=>{
+          const index = rounds.length-1;
+          const round = rounds[index];
+          round.index = index;
+          API.saveRound(round)
+             .then(data => console.log(data))
+             .catch(e => console.log(e));
+        });
+  }
+
   resizeContainer() {    
     this.setState({
       height: window.innerHeight * .90
@@ -185,16 +213,7 @@ class Play extends Component {
     
     // //Define Variables to be passed as props    
     const { open} = this.state,  
-          {sym1, sym2} = this.state.symbols,
-          buttons = this.getAnswerArray().map(symbol =>{
-            return (
-              <Button className="col-sm-2" 
-                bsStyle="primary" key={symbol.id}
-                block
-                onClick={()=>this.guessName(symbol)}
-              >{symbol.name}</Button>
-            )
-          });
+          {sym1, sym2} = this.state.symbols;          
     
     //JSX of components to be returned by the render function
     return (  
@@ -233,7 +252,7 @@ class Play extends Component {
             </div>
             <div className="card-body">  
               <Row>
-                {buttons}
+                {this.state.buttons}
               </Row>
             </div>
           </div>
@@ -266,18 +285,10 @@ class Play extends Component {
 
   timeUp() {
     //increase round index 
+    
 
-    //push most recent round to mongoDB
-    this.getIDBTable("game")
-        .then(({rounds})=>{
-          const index = rounds.length-1;
-          const round = rounds[index];
-          round.index = index;
-          API.saveRound(round)
-             .then(data => console.log(data))
-             .catch(e => console.log(e));
-        })
-
+    this.pushRoundToMongo();
+    
     //If round index < 5 start new Round else end game
   }
 }
