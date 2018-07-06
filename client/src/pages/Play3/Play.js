@@ -22,7 +22,8 @@ class Play extends Component {
     open: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
-    timer: 10,
+    time:60,
+    timer: {},
     playerID: "",
     gameID: ""
   };
@@ -142,8 +143,6 @@ class Play extends Component {
     if (action === "add") this.checkIfMatch();
   }
 
-
-
   getIDBTable = (store) => {
     return new Promise((resolve, reject) => {
       db.table(store)
@@ -223,7 +222,7 @@ class Play extends Component {
       <Nav 
           title="DataViz-Wiz"
           page="play"
-          time={ (this.state.timer === 0) ? `Time's Up!` : this.state.timer }
+          time= {this.state.time}//{ (this.state.timer === 0) ? `Time's Up!`: this.state.timer }
       />
       <Container style={{height:this.state.height}}>
         {sym1.map(symbol =>{ 
@@ -275,25 +274,26 @@ class Play extends Component {
     this.setState({
       symbols,
       guesses: [],
-      matches: [...this.state.matches, match],
-      timer: 10
+      matches: [...this.state.matches, match]
     });
-    this.run();
   }
 
 // Time functions: run defines the tick-rate of once per second, stop clears the interval,
 // and decrement counts down to zero and updates the state for the timer in the navbar
   run = () => {
-    this.timer = setInterval(() => {
-      let newTime = this.state.timer - 1;
-      (newTime === -1) ? this.stop() :
-      this.setState({
-        timer: newTime
-      })
-  }, 1000)};
+    this.setState({timer: setInterval(this.setTimer, 1000)});
+  };
 
+  setTimer = () => {
+    let newTime = this.state.time - 1;
+    (newTime === -1) ? this.stop() :
+    this.setState({
+      time: newTime
+    })
+  }
   stop = () => {
-    clearInterval(this.timer);
+    toast.success(`Time Up!`);
+    clearInterval(this.state.timer);
   }
 
   startNewGame() { 
@@ -304,7 +304,8 @@ class Play extends Component {
         .add({id:1, rounds:[]})
         .then(()=>{
           this.setState({gameID: data._id});
-          this.setBoard();
+          this.setBoard();          
+          this.run();
         })
     })
   }
