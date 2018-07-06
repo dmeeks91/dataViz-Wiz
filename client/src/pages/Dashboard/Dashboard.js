@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {Redirect, Link} from "react-router-dom";
 import { db } from "../../utils";
+import Nav from "../../components/Nav";
 import "./Dashboard.css";
 
 class Dashboard extends Component {
@@ -31,6 +32,8 @@ class Dashboard extends Component {
         return <Redirect to="/"/>;
     }
     return (  
+      <div>
+        <Nav title="DataViz-Wiz"/>
         <div className="container" id="btnHolder">
           <div className="row">
             <div className="col playCol">
@@ -55,6 +58,7 @@ class Dashboard extends Component {
             </div>
           </div>
         </div>
+      </div>
     );
   }
 }

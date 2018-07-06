@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { db, board }from "../../utils";
 import {Container} from "../../components/Grid";
+import Nav from "../../components/Nav";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
 import Modal from "react-responsive-modal";
@@ -19,6 +20,7 @@ class Play extends Component {
     open: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
+    timer: 10
   };
 
   alert = (match) => {
@@ -40,7 +42,6 @@ class Play extends Component {
   checkIfMatch() {
 
     if (this.state.guesses.length !== 2) return;
-
     const [g1, g2] = this.state.guesses;
 
     this.alert(g1.symbolID === g2.symbolID);   
@@ -108,7 +109,7 @@ class Play extends Component {
       guesses.push({boardID, symbolID}); 
       action = "add";
     }
-    else
+    else 
     { 
       guesses = guesses.filter(guess => guess.boardID !== boardID);
       action = "remove";
@@ -121,6 +122,8 @@ class Play extends Component {
     document.getElementById(boardID).classList[action]("selected");    
     if (action === "add") this.checkIfMatch();
   }
+
+
 
   getIDBTable = (store) => {
     return new Promise((resolve, reject) => {
@@ -149,7 +152,6 @@ class Play extends Component {
       this.closeModal();
       this.setBoard();
     }
-    
   }
   
   resizeContainer() {    
@@ -178,7 +180,13 @@ class Play extends Component {
           });
     
     //JSX of components to be returned by the render function
-    return (  
+    return ( 
+    <div>
+      <Nav 
+          title="DataViz-Wiz"
+          page="play"
+          time={ (this.state.timer === 0) ? `Time's Up!` : this.state.timer }
+      />
       <Container style={{height:this.state.height}}>
         {sym1.map(symbol =>{ 
           const boardID = `sym1_${symbol.id}`;
@@ -210,7 +218,7 @@ class Play extends Component {
           onClose={this.closeModal} closeOnOverlayClick={false} >
           <div className="card">
             <div className="card-header">
-              <h1 id="modalTitle" className="title">Select Viz Name</h1>
+              <h1 id="modalTitle" className="title"><img src={(this.state.matches.length >= 1) ? this.state.matches[this.state.matches.length-1].filepath : ""} alt="Symbol" /></h1>
             </div>
             <div className="card-body">  
               <Row>
@@ -220,16 +228,34 @@ class Play extends Component {
           </div>
         </Modal>
       </Container>
+    </div>
     );
   }
-
+  
   setBoard() {    
     const {match, ...symbols} = this.state.board.getSymbols(this.state.matches);
     this.setState({
       symbols,
       guesses: [],
-      matches: [...this.state.matches, match]
+      matches: [...this.state.matches, match],
+      timer: 10
     });
+    this.run();
+  }
+
+// Time functions: run defines the tick-rate of once per second, stop clears the interval,
+// and decrement counts down to zero and updates the state for the timer in the navbar
+  run = () => {
+    this.timer = setInterval(() => {
+      let newTime = this.state.timer - 1;
+      (newTime === -1) ? this.stop() :
+      this.setState({
+        timer: newTime
+      })
+  }, 1000)};
+
+  stop = () => {
+    clearInterval(this.timer);
   }
 
   startNewGame() {    

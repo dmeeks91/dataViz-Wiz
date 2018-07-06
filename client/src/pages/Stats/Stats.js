@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Container } from "../../components/Grid";
 import {Redirect} from "react-router-dom";
 import Jumbotron from "../../components/Jumbotron";
+import Nav from "../../components/Nav";
 import { db } from "../../utils";
 
 
@@ -53,6 +54,8 @@ class Stats extends Component {
         return <Redirect to="/"/>;
     }
     return (
+    <div>
+      <Nav title="DataViz-Wiz"/>
       <Container>       
         <Jumbotron>
         <div className="row">
@@ -96,6 +99,7 @@ class Stats extends Component {
           </div>
         </Jumbotron>
       </Container>
+    </div>
     );
   }
 }
