@@ -11,4 +11,7 @@ router.route("/new-game")
 router.route("/save-round")
   .post(gameController.saveRound);
 
+router.route("/get-stats")
+  .post(gameController.getStats);
+
 module.exports = router;

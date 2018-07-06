@@ -9,6 +9,9 @@ export default  {
     return axios.post("/api/new-game")
   },
   
-  saveRound: (round) => axios.post("/api/save-round", round)
+  saveRound: (round) => axios.post("/api/save-round", round),
+
+  getStats: (playerID) => axios.get("/api/get-stats", playerID)
+
 
 };
