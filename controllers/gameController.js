@@ -41,9 +41,9 @@ module.exports = {
   },
 
   getStats: function(req, res) {
-    db.Game
+    db.Round
       console.log("running")
-      .findById({ _id: req.params.id })
+      .findOneAndUpdate({ playerID: req.body.playerID },)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   }

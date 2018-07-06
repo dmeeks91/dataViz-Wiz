@@ -12,6 +12,6 @@ router.route("/save-round")
   .post(gameController.saveRound);
 
 router.route("/get-stats")
-  .post(gameController.getStats);
+  .get(gameController.getStats);
 
 module.exports = router;
