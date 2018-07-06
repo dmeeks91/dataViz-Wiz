@@ -16,11 +16,19 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
 
-  create: function(req, res) {
-    db.Player
-      .create(req.body)
+  newGame: function(req, res) {
+    db.Game
+      .create({closed: false})
       .then(dbModel => {
       res.json(dbModel)})
+      .catch(err => res.status(422).json(err));
+  },
+
+  saveRound:function(req, res) {
+    const {playerID, gameID, index} = req.body;
+    db.Round
+      .findOneAndUpdate({ playerID, gameID, index }, req.body, {upsert: true, returnNewDocument: true})
+      .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
 

@@ -8,10 +8,12 @@ import Modal from "react-responsive-modal";
 import { toast } from 'react-toastify';
 import { Row, Button } from "react-bootstrap";
 import "./Play.css";
+import API from "../../utils/API";
 
 class Play extends Component {
   state = {
     board: new board(),
+    buttons: [],
     guesses: [],
     guessString: "",
     height: 0,
@@ -20,7 +22,9 @@ class Play extends Component {
     open: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
-    timer: 10
+    timer: 10,
+    playerID: "",
+    gameID: ""
   };
 
   alert = (match) => {
@@ -31,7 +35,7 @@ class Play extends Component {
       this.setState({
         open: true,
       });
-      this.getAnswerArray();
+      this.getButtons();
     }
     else if (!document.getElementsByClassName("Toastify__toast Toastify__toast--error").length) 
     {      
@@ -58,6 +62,7 @@ class Play extends Component {
             }
             else
             {
+              this.setState({playerID: profile[0].id})
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
               this.startNewGame();
@@ -87,6 +92,20 @@ class Play extends Component {
     const others = [...sym1, ...sym2].filter(symbol => symbol.id !== match.id);
 
     return this.state.board.getAnswers(match, others);
+  }
+
+  getButtons = () => {
+    const buttons = this.getAnswerArray().map(symbol =>{
+      return (
+        <Button className="col-sm-2" 
+          bsStyle="primary" key={symbol.id}
+          block
+          onClick={()=>this.guessName(symbol)}
+        >{symbol.name}</Button>
+      )
+    });
+
+    this.setState({buttons});
   }
 
   clickSymbol = (boardID, symbolID) => {
@@ -134,26 +153,54 @@ class Play extends Component {
   }
 
   guessName = ({id, name}) => {    
-    const { round, matches } = this.state;
+    const { round, matches, gameID, playerID } = this.state;
     const match = matches[matches.length-1];
 
     this.getIDBTable("game")
         .then((game) => {
-          if (!game.rounds[round]) game.rounds[round] = [];
+          //Initialize round array if it doesn't already exist
+          if (game.rounds.length !== round) {
+            //pushes last round to mongo
+            if ( round > 1) this.timeUp();
+            game.rounds.push({
+              gameID,
+              playerID,
+              guesses: []
+            });
+          }
 
+          //Create New guess
           const newGuess =  {correct: match.name, guess: name};
 
-          game.rounds[round].push(newGuess);
+          //Push new guess to array
+          game.rounds[round - 1].guesses.push(newGuess);
+
+          //Update current game object in indexedDB
           db.table("game").update(1, {rounds: game.rounds});
         });
 
     if (match.id === id)
     {
       this.closeModal();
+      this.state.guesses
+          .forEach(({ boardID, symbolID }) => this.clickSymbol(boardID, symbolID));
       this.setBoard();
     }
   }
   
+  pushRoundToMongo = () => {
+    //push most recent round to mongoDB
+    this.getIDBTable("game")
+        .then(({rounds})=>{
+          const index = rounds.length-1;
+          const round = rounds[index];
+          round.index = index;
+          API.saveRound(round)
+             .then(data => console.log(data))
+             .catch(e => console.log(e));
+        });
+  }
+
   resizeContainer() {    
     this.setState({
       height: window.innerHeight * .90
@@ -168,16 +215,7 @@ class Play extends Component {
     
     // //Define Variables to be passed as props    
     const { open} = this.state,  
-          {sym1, sym2} = this.state.symbols,
-          buttons = this.getAnswerArray().map(symbol =>{
-            return (
-              <Button className="col-sm-2" 
-                bsStyle="primary" key={symbol.id}
-                block
-                onClick={()=>this.guessName(symbol)}
-              >{symbol.name}</Button>
-            )
-          });
+          {sym1, sym2} = this.state.symbols;          
     
     //JSX of components to be returned by the render function
     return ( 
@@ -222,7 +260,7 @@ class Play extends Component {
             </div>
             <div className="card-body">  
               <Row>
-                {buttons}
+                {this.state.buttons}
               </Row>
             </div>
           </div>
@@ -258,13 +296,26 @@ class Play extends Component {
     clearInterval(this.timer);
   }
 
-  startNewGame() {    
-    db.table('game').clear();
-    db.table('game')
-      .add({id:1, rounds:{}})
-      .then(()=>{
-        this.setBoard();
-      })
+  startNewGame() { 
+    API.newGame()
+    .then( ({data}) => {
+      db.table('game').clear();
+      db.table('game')
+        .add({id:1, rounds:[]})
+        .then(()=>{
+          this.setState({gameID: data._id});
+          this.setBoard();
+        })
+    })
+  }
+
+  timeUp() {
+    //increase round index 
+    
+
+    this.pushRoundToMongo();
+    
+    //If round index < 5 start new Round else end game
   }
 }
 
