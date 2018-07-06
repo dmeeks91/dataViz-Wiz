@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { GoogleLogin } from 'react-google-login';
 import {Container} from "../../components/Grid";
+import Nav from "../../components/Nav";
 import GLogo from "../../components/GLogo";
 import { db } from "../../utils";
 import "./Login.css";
@@ -61,6 +62,7 @@ class Login extends Component {
     }
     return (  
         <div>
+            <Nav title="DataViz-Wiz"/>
             <Container>
                 <div className="card">
                     <div className="card-body">

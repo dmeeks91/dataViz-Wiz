@@ -3,6 +3,7 @@ import {Container} from "../../components/Grid";
 import {Redirect} from "react-router-dom";
 import symbols from "../../symbols.json";
 import Symbol from "../../components/Symbol";
+import Nav from "../../components/Nav";
 import Modal from "react-responsive-modal";
 import { db } from "../../utils";
 import "./Learn.css";
@@ -67,7 +68,9 @@ class Learn extends Component {
           symDesc =  (this.state.symbol) ? this.state.symbol.description :"";
 
     //JSX of components to be returned by the render function
-    return (          
+    return (  
+      <div>
+        <Nav title="DataViz-Wiz"/>        
         <Container style={{height:this.state.height}}>
           {symbols.map(symbol =>{
             return (
@@ -97,6 +100,7 @@ class Learn extends Component {
             </div>
           </Modal>
         </Container>
+      </div>
     );
   }
 }

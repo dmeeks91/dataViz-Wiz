@@ -5,7 +5,6 @@ import Learn from "./pages/Learn";
 import Play from "./pages/Play3";
 import Stats from "./pages/Stats";
 import NoMatch from "./pages/NoMatch";
-import Nav from "./components/Nav";
 import { ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
@@ -20,7 +19,6 @@ import {
 const App = () => (
   <Router>
     <div>
-      <Nav/>
       <ToastContainer
         position="top-center"
         autoClose={1500}

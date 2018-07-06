@@ -8,14 +8,15 @@
   font-size: 150%;
   text-align: center;
 }
-.playImg {
-  width: 80%;
-  max-width: unset;
-}
 
 .selected {
   border: 1px solid #eb6864;
   box-shadow: 2px 5px 2px #afaeaead, -2px -4px #eb6864;
+}
+
+.playImg {
+  width: 90%;
+  max-width: unset;
 }
 
 @media only screen and (max-width:450px){
