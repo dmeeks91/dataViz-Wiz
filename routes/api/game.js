@@ -13,5 +13,12 @@ router.route("/save-round")
 
 router.route("/get-stats")
   .get(gameController.getStats);
+  
+router.route("/update-game")
+  .post(gameController.updateGame);
+
+//get
+router.route("/games/:id")
+  .get(gameController.getGames);
 
 module.exports = router;
