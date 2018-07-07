@@ -3,14 +3,17 @@ import { Container } from "../../components/Grid";
 import {Redirect} from "react-router-dom";
 import Jumbotron from "../../components/Jumbotron";
 import Nav from "../../components/Nav";
-import { db } from "../../utils";
+import { db, board } from "../../utils";
+import API from "../../utils/API";
 
 
 class Stats extends Component {
   state = {
     imageUrl: "",
     name: "",
-    logIn: false
+    logIn: false,
+    playerID: "",
+
   };
 
 
@@ -45,6 +48,20 @@ class Stats extends Component {
               this.setState({logIn: true});
             };
         });
+  }
+
+  componentDidMount() {
+    db.table('userProfile')
+    .toArray()
+    .then(profile => {
+          this.setState({playerID: profile[0].id})
+          console.log(this.state.playerID)
+    })
+    .then(
+      API.getStats(this.state.playerID)
+      .then(data => console.log(data))
+      .catch(e => console.log(e))
+    )
   }
 
 
