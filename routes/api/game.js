@@ -17,7 +17,6 @@ router.route("/get-stats")
 router.route("/update-game")
   .post(gameController.updateGame);
 
-//get
 router.route("/games/:id")
   .get(gameController.getGames);
 

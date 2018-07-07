@@ -186,7 +186,6 @@ class Play extends Component {
       this.state.guesses
           .forEach(({ boardID, symbolID }) => this.clickSymbol(boardID, symbolID));
       this.setBoard();
-      
     }
   };
   
@@ -354,6 +353,7 @@ class Play extends Component {
   timeUp() {
     //increase round index 
     
+
     this.pushRoundToMongo();
     
     //If round index < 5 start new Round else end game

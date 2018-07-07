@@ -11,7 +11,9 @@ export default  {
   
   saveRound: (round) => axios.post("/api/save-round", round),
 
-  getStats: (playerID) => axios.get("/api/get-stats", playerID)
+  getStats: (playerID) => axios.get("/api/get-stats", playerID),
+
+  updateGame: (game) => axios.post("/api/update-game", game)
 
 
 };

@@ -6,6 +6,8 @@ import Jumbotron from "../../components/Jumbotron";
 import { Container } from "../../components/Grid";
 import { db }from "../../utils";
 import Modal from "react-responsive-modal";
+import gameTypes from "../../gameTypes.json";
+import { Button } from "react-bootstrap";
 import "./Options.css";
 
 
@@ -13,6 +15,7 @@ class Options extends Component {
 
     state = {
         open: false,
+        options: [],
       };
     
       closeModal = () => {
@@ -26,11 +29,33 @@ class Options extends Component {
       };  
 
 
-    saveTime () {
-        db.table('userProfile')
-        .add()
-        .catch(err => console.log(err));
+    // saveTime () {
+    //     db.table('userProfile')
+    //     .add()
+    //     .catch(err => console.log(err));
+    // }
+
+    componentDidMount() {  
+      this.getGameTypes();
+
     }
+
+    getGameTypes = () => {
+      // console.log(gameTypes[0].options)
+      const gameOptions = gameTypes[0].options
+      const options = Object.keys(gameOptions).map((key, index) =>{
+        console.log(gameOptions[index])
+        return (
+          <Button className="col-sm-2" 
+            bsStyle="primary"
+            key={gameOptions[key]}
+            block
+          >{`${gameOptions[index]} seconds`}</Button>
+        )
+      });
+  
+      this.setState({options});
+    };
 
 
 
@@ -52,12 +77,12 @@ class Options extends Component {
         </Modal>
 
         <Link to="/play">
-          <p value="30">30 seconds</p>
-          <p>60 seconds</p>
-          <p>90 seconds</p>
-          <p>120 seconds</p>
+          {this.state.options}
         </Link>
         </Collapsible>
+        </div>
+
+         <div className="card">
         <Collapsible transitionTime={150} trigger="Versus">
           <p>Get Started</p>
         </Collapsible>
