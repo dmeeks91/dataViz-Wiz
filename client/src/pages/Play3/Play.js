@@ -22,7 +22,7 @@ class Play extends Component {
     open: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
-    time:60,
+    time:10,
     timer: {},
     playerID: "",
     gameID: ""
@@ -160,7 +160,7 @@ class Play extends Component {
           //Initialize round array if it doesn't already exist
           if (game.rounds.length !== round) {
             //pushes last round to mongo
-            if ( round > 1) this.timeUp();
+            //if ( round > 1) this.timeUp();
             game.rounds.push({
               gameID,
               playerID,
@@ -294,6 +294,7 @@ class Play extends Component {
   stop = () => {
     toast.success(`Time Up!`);
     clearInterval(this.state.timer);
+    setTimeout(()=>this.startRound(),3000);
   }
 
   startNewGame() { 
@@ -308,6 +309,27 @@ class Play extends Component {
           this.run();
         })
     })
+  }
+
+  startRound() {
+    //push round to mongo
+    this.pushRoundToMongo();
+
+    //new round
+    const newRound = this.state.round + 1;
+    this.setState({ 
+      round: newRound,
+      time: 10
+     });
+
+    //alert new round
+    toast.success(`Starting Round #${newRound}`);
+
+    //new board
+    this.setBoard();
+
+    //start timer
+    this.run();
   }
 
   timeUp() {
