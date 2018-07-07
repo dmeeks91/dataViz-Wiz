@@ -345,7 +345,7 @@ class Play extends Component {
     const newRound = this.state.round + 1;
     this.setState({ 
       round: newRound,
-      time: 10
+      time: 15 //option from state
      });
 
     //alert new round
