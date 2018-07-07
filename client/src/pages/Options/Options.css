@@ -1,0 +1,41 @@
+.card {
+    margin: 2%;
+}
+
+.Collapsible {
+    width: 300px;
+}
+
+.Collapsible__trigger {
+    font-size: 32px;
+    display: block;
+    background-color: #eb6864;
+}
+
+.Collapsible__contentInner {
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+p {
+    color: rgb(56, 56, 56)
+}
+
+p:hover {
+    background-color:  #fd7772; 
+    display: block;
+    text-decoration: none;
+}
+
+p:active {
+    background-color:  #f81008; 
+    display: block;
+    text-decoration: none;
+}
+
+div {
+justify-content: center;
+padding: 0;
+text-decoration: none;
+
+}

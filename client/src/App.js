@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Learn from "./pages/Learn";
 import Play from "./pages/Play3";
+import Options from "./pages/Options";
 import Stats from "./pages/Stats";
 import NoMatch from "./pages/NoMatch";
 import { ToastContainer, Zoom } from 'react-toastify';
@@ -37,6 +38,7 @@ const App = () => (
         <Route exact path="/learn" component={Learn} />
         <Route exact path="/play" component={Play} />
         <Route exact path="/stats" component={Stats} />        
+        <Route exact path="/options" component={Options} />
         <Route exact path="/api/user" component={Login} />
         <Route component={NoMatch} />
       </Switch>

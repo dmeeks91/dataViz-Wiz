@@ -40,6 +40,12 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
 
+  getStats: function(req, res) {
+    db.Round
+      console.log("running")
+      .findOneAndUpdate({ playerID: req.body.playerID },)
+  },
+  
   getGames: function(req, res) {
     db.Game.find({win: req.params.id})
       .populate({path:"rounds"})

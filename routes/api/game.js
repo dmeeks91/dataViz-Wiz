@@ -11,10 +11,12 @@ router.route("/new-game")
 router.route("/save-round")
   .post(gameController.saveRound);
 
+router.route("/get-stats")
+  .get(gameController.getStats);
+  
 router.route("/update-game")
   .post(gameController.updateGame);
 
-//get
 router.route("/games/:id")
   .get(gameController.getGames);
 
