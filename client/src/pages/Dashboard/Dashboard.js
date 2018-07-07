@@ -37,7 +37,7 @@ class Dashboard extends Component {
         <div className="container" id="btnHolder">
           <div className="row">
             <div className="col playCol">
-              <Link className="dashLink" to="/play">
+              <Link className="dashLink" to="/options">
                 <h1 className="dashBtn">PLAY</h1>
               </Link>
             </div>
