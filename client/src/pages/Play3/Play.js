@@ -246,7 +246,7 @@ class Play extends Component {
                 id = {boardID}  
                 name={symbol.name}
                 url={symbol.filepath}
-                type="playImg"
+                type="playImg slideDown"
                 onClick = { () => this.clickSymbol(boardID, symbol.id) }
             />
           )}
@@ -259,7 +259,7 @@ class Play extends Component {
                 id = {boardID}  
                 name={symbol.name}
                 url={symbol.filepath}
-                type="playImg"
+                type="playImg slideDown"
                 onClick = { () => this.clickSymbol(boardID, symbol.id) }
             />
           )}
