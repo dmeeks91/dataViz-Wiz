@@ -67,6 +67,8 @@ class Play extends Component {
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
               this.startNewGame();
+              // API.getGames(profile[0].id)
+              //   .then((data)=>console.log(data));
             }
         });  
   };
@@ -84,7 +86,7 @@ class Play extends Component {
       document.getElementById(boardID)
       .classList.value.indexOf("selected") !== -1
     );
-  }  
+  };  
 
   getAnswerArray = () => {
     const { matches } = this.state, {sym1, sym2} = this.state.symbols;
@@ -93,7 +95,7 @@ class Play extends Component {
     const others = [...sym1, ...sym2].filter(symbol => symbol.id !== match.id);
 
     return this.state.board.getAnswers(match, others);
-  }
+  };
 
   getButtons = () => {
     const buttons = this.getAnswerArray().map(symbol =>{
@@ -107,7 +109,7 @@ class Play extends Component {
     });
 
     this.setState({buttons});
-  }
+  };
 
   clickSymbol = (boardID, symbolID) => {
     let guesses = this.state.guesses, action;    
@@ -141,7 +143,7 @@ class Play extends Component {
     //add/remove CSS class and check if match
     document.getElementById(boardID).classList[action]("selected");    
     if (action === "add") this.checkIfMatch();
-  }
+  };
 
   getIDBTable = (store) => {
     return new Promise((resolve, reject) => {
@@ -149,7 +151,7 @@ class Play extends Component {
         .toArray()
         .then((data) => resolve(data[0]));
     });
-  }
+  };
 
   guessName = ({id, name}) => {    
     const { round, matches, gameID, playerID } = this.state;
@@ -185,7 +187,7 @@ class Play extends Component {
           .forEach(({ boardID, symbolID }) => this.clickSymbol(boardID, symbolID));
       this.setBoard();
     }
-  }
+  };
   
   pushRoundToMongo = () => {
     //push most recent round to mongoDB
@@ -197,14 +199,22 @@ class Play extends Component {
           API.saveRound(round)
              .then(data => console.log(data))
              .catch(e => console.log(e));
+          const game = {
+            id: round.gameID,
+            win: round.playerID,
+            lose: null
+          }
+          API.updateGame(game)
+            .then(data => console.log(data))
+            .catch(e => console.log(e));
         });
-  }
+  };
 
   resizeContainer() {    
     this.setState({
       height: window.innerHeight * .90
     });
-  }
+  };
 
   render() {
     //Redirect to Login page if not logged in
@@ -267,7 +277,7 @@ class Play extends Component {
       </Container>
     </div>
     );
-  }
+  };
   
   setBoard() {    
     const {match, ...symbols} = this.state.board.getSymbols(this.state.matches);
@@ -276,7 +286,7 @@ class Play extends Component {
       guesses: [],
       matches: [...this.state.matches, match]
     });
-  }
+  };
 
 // Time functions: run defines the tick-rate of once per second, stop clears the interval,
 // and decrement counts down to zero and updates the state for the timer in the navbar
@@ -290,16 +300,20 @@ class Play extends Component {
     this.setState({
       time: newTime
     })
-  }
+  };
+
   stop = () => {
     toast.success(`Time Up!`);
     clearInterval(this.state.timer);
-  }
+  };
 
   startNewGame() { 
+    //Add New game to Mongo
     API.newGame()
     .then( ({data}) => {
+      //Clear game in indexedDB
       db.table('game').clear();
+      //Add game in indexedDB
       db.table('game')
         .add({id:1, rounds:[]})
         .then(()=>{
@@ -308,7 +322,7 @@ class Play extends Component {
           this.run();
         })
     })
-  }
+  };
 
   timeUp() {
     //increase round index 
@@ -317,7 +331,7 @@ class Play extends Component {
     this.pushRoundToMongo();
     
     //If round index < 5 start new Round else end game
-  }
+  };
 }
 
 export default Play;
