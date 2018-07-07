@@ -10,7 +10,7 @@ const games = new Schema({
   rounds: [
     {
       type: Schema.Types.ObjectId,
-      ref: "round"
+      ref: "Round"
     }
   ]
 });
