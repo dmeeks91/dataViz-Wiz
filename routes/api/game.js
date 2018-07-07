@@ -11,7 +11,7 @@ router.route("/new-game")
 router.route("/save-round")
   .post(gameController.saveRound);
 
-router.route("/update-games")
+router.route("/update-game")
   .post(gameController.updateGame);
 
 //get

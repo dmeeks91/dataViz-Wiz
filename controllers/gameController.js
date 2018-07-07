@@ -58,6 +58,7 @@ module.exports = {
   },
 
   updateGame: (req, res) => {
+    console.log(req.body);
     const {id, win, lose} = req.body;
     db.Game
       .findOneAndUpdate({_id:id}, {win, lose}, {upsert:false})

@@ -22,7 +22,7 @@ class Play extends Component {
     open: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
-    time:10,
+    time:15,
     timer: {},
     playerID: "",
     gameID: ""
@@ -199,13 +199,16 @@ class Play extends Component {
           API.saveRound(round)
              .then(data => console.log(data))
              .catch(e => console.log(e));
-          const game = {
+          // const game = {
+          //   id: round.gameID,
+          //   win: round.playerID,
+          //   lose: null
+          // }
+          API.updateGame({
             id: round.gameID,
             win: round.playerID,
             lose: null
-          }
-          API.updateGame(game)
-            .then(data => console.log(data))
+          }).then(data => console.log(data))
             .catch(e => console.log(e));
         });
   };
@@ -305,7 +308,8 @@ class Play extends Component {
   stop = () => {
     toast.success(`Time Up!`);
     clearInterval(this.state.timer);
-    setTimeout(()=>this.startRound(),3000);
+    this.timeUp();
+    //setTimeout(()=>this.startRound(),3000);
   }
 
   startNewGame() { 
