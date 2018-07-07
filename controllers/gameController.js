@@ -27,8 +27,20 @@ module.exports = {
   saveRound:function(req, res) {
     const {playerID, gameID, index} = req.body;
     db.Round
-      .findOneAndUpdate({ playerID, gameID, index }, req.body, {upsert: true, returnNewDocument: true})
-      .then(dbModel => res.json(dbModel))
+      //.findOneAndUpdate({ playerID, gameID, index }, req.body)//, {upsert: true}
+      .findOne({ playerID, gameID, index })
+      .then(round => {      
+        if (!round) {
+          db.Round.create(req.body)
+            .then(round => {
+              return db.Game.findByIdAndUpdate(gameID, 
+                { $push:{ rounds: round._id } },
+                { new: true }
+              );
+            })
+        }
+      })
+      .then(data => res.json(data))
       .catch(err => res.status(422).json(err));
   },
 
@@ -41,8 +53,9 @@ module.exports = {
   },
 
   getGames: function(req, res) {
+    console.log(req.params.id);
     db.Game.find({win: req.params.id})
-      .populate({path:"rounds"})
+      .populate('rounds')
       .then(games => {
         res.json(games);
       })
@@ -58,7 +71,6 @@ module.exports = {
   },
 
   updateGame: (req, res) => {
-    console.log(req.body);
     const {id, win, lose} = req.body;
     db.Game
       .findOneAndUpdate({_id:id}, {win, lose}, {upsert:false})

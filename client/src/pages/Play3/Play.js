@@ -67,8 +67,6 @@ class Play extends Component {
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
               this.startNewGame();
-              // API.getGames(profile[0].id)
-              //   .then((data)=>console.log(data));
             }
         });  
   };
@@ -153,6 +151,16 @@ class Play extends Component {
     });
   };
 
+  getStats = () => {
+        //logGame Stats
+    db.table('userProfile')
+      .toArray()
+      .then(profile =>{
+        API.getGames(profile[0].id)
+        .then((data)=>console.log(data));
+      });
+  }
+  
   guessName = ({id, name}) => {    
     const { round, matches, gameID, playerID } = this.state;
     const match = matches[matches.length-1];
@@ -309,7 +317,7 @@ class Play extends Component {
     toast.success(`Time Up!`);
     clearInterval(this.state.timer);
     this.timeUp();
-    //setTimeout(()=>this.startRound(),3000);
+    this.getStats();
   }
 
   startNewGame() { 
