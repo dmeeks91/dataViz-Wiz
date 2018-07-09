@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import {Redirect, Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Collapsible from 'react-collapsible';
 import Nav from "../../components/Nav";
-import Jumbotron from "../../components/Jumbotron";
 import { Container } from "../../components/Grid";
-import { db }from "../../utils";
 import Modal from "react-responsive-modal";
 import gameTypes from "../../gameTypes.json";
 import { Button } from "react-bootstrap";
@@ -53,7 +51,7 @@ class Options extends Component {
 
     }
 
-    getGameTypes = () => {
+    getGameTypes() {
       // console.log(gameTypes[0].options)
       const gameOptions = gameTypes[0].options
       const options = Object.keys(gameOptions).map((key, index) =>{
@@ -73,37 +71,32 @@ class Options extends Component {
 
 
 
-  render() {
-    const { open } = this.state
+    render() {
+      const { open } = this.state;
 
-    return(
+      return(
         <div>
-        <Nav title="DataViz-Wiz"/>
-
-        <Container>       
-        <div className="card">
-        <Collapsible transitionTime={150} trigger="Time Trial"> <h1 onClick = {()=>this.setModal()}> ? </h1>
-
-         <Modal open={open} onClose={this.closeModal} center>
-           <div>
-               <h1> Find the matching symbols and choose the correct name </h1>
+          <Nav title="DataViz-Wiz"/>
+          <Container>       
+            <div className="card">
+              <Collapsible transitionTime={150} trigger="Time Trial"> <h1 onClick = {()=>this.setModal()}> ? </h1>
+                <Modal open={open} onClose={this.closeModal} center>
+                  <div>
+                    <h1> Hello </h1>
+                  </div>
+                </Modal>
+                <Link to="/play">
+                  {this.state.options}
+                </Link>
+              </Collapsible>
             </div>
-        </Modal>
-
-        <Link to="/play">
-          {this.state.options}
-        </Link>
-        </Collapsible>
-        </div>
-
-         <div className="card">
-        <Collapsible transitionTime={150} trigger="Versus">
-          <p>Get Started</p>
-        </Collapsible>
-        </div>
-      </Container>
-        </div>
-   
+            <div className="card">
+              <Collapsible transitionTime={150} trigger="Versus">
+                <p>Get Started</p>
+              </Collapsible>
+            </div>
+          </Container>
+        </div>   
       );
     }
 }
