@@ -15,6 +15,7 @@ class Options extends Component {
 
     state = {
         open: false,
+        playerID: "",
         options: [],
       };
     
@@ -29,14 +30,26 @@ class Options extends Component {
       };  
 
 
-    // saveTime () {
-    //     db.table('userProfile')
-    //     .add()
-    //     .catch(err => console.log(err));
-    // }
+    saveTime (time) {
+        db.table('userProfile')
+          .update(this.state.playerID,{timeInterval: time});
+    }
 
     componentDidMount() {  
-      this.getGameTypes();
+      db.table('userProfile')
+        .toArray()
+        .then(profile => {
+            //redirect to login screen if not logged in
+            if (!profile.length) 
+            {
+              this.setState({ logIn: true });
+            }
+            else
+            {
+              this.setState({playerID: profile[0].id})
+              this.getGameTypes();
+            }
+        });  
 
     }
 
@@ -44,12 +57,13 @@ class Options extends Component {
       // console.log(gameTypes[0].options)
       const gameOptions = gameTypes[0].options
       const options = Object.keys(gameOptions).map((key, index) =>{
-        console.log(gameOptions[index])
+        // console.log(gameOptions[index])
         return (
           <Button className="col-sm-2" 
             bsStyle="primary"
             key={gameOptions[key]}
             block
+            onClick={() => this.saveTime(gameOptions[index])}
           >{`${gameOptions[index]} seconds`}</Button>
         )
       });
@@ -72,7 +86,7 @@ class Options extends Component {
 
          <Modal open={open} onClose={this.closeModal} center>
            <div>
-               <h1> Hello </h1>
+               <h1> Find the matching symbols and choose the correct name </h1>
             </div>
         </Modal>
 

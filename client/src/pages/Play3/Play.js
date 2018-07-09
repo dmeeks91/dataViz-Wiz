@@ -22,7 +22,8 @@ class Play extends Component {
     open: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
-    time:15,
+    time:0,
+    timeInterval: 0,
     timer: {},
     playerID: "",
     gameID: ""
@@ -63,7 +64,11 @@ class Play extends Component {
             }
             else
             {
-              this.setState({playerID: profile[0].id})
+              this.setState({
+                playerID: profile[0].id,
+                time: profile[0].timeInterval,
+                timeInterval: profile[0].timeInterval
+              })
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
               this.startNewGame();
@@ -345,7 +350,7 @@ class Play extends Component {
     const newRound = this.state.round + 1;
     this.setState({ 
       round: newRound,
-      time: 15 //option from state
+      time: this.state.timeInterval //option from state
      });
 
     //alert new round
