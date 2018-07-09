@@ -209,14 +209,17 @@ class Play extends Component {
           if (!round) return; //exit if no guesses made 
           round.index = index;
           API.saveRound(round)
-             .then(data => console.log(data))
+             .then(() => {
+               API.updateGame({
+                  id: round.gameID,
+                  win: round.playerID,
+                  lose: null
+                }).then(() => {
+                  this.getStats();
+                })
+                  .catch(e => console.log(e));
+             })
              .catch(e => console.log(e));
-          API.updateGame({
-            id: round.gameID,
-            win: round.playerID,
-            lose: null
-          }).then(data => console.log(data))
-            .catch(e => console.log(e));
         });
   };
 
@@ -316,7 +319,7 @@ class Play extends Component {
     toast.success(`Time Up!`);
     clearInterval(this.state.timer);
     this.timeUp();
-    this.getStats();
+    //this.getStats();
   }
 
   startNewGame() { 
