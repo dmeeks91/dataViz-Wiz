@@ -3,7 +3,7 @@ import { Container } from "../../components/Grid";
 import {Redirect} from "react-router-dom";
 import Jumbotron from "../../components/Jumbotron";
 import Nav from "../../components/Nav";
-import { db, board } from "../../utils";
+import { db } from "../../utils";
 import API from "../../utils/API";
 
 

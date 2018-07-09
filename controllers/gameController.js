@@ -2,21 +2,15 @@ const db = require("../models");
 
 // Defining methods for the booksController
 module.exports = {
-  findAll: function(req, res) {
+  findAll: (req, res) => {
     db.Player
       .find(req.query)
       .sort({ date: -1 })
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  findById: function(req, res) {
-    db.Book
-      .findById(req.params.id)
-      .then(dbModel => res.json(dbModel))
-      .catch(err => res.status(422).json(err));
-  },
 
-  newGame: function(req, res) {
+  newGame: (req, res) => {
     db.Game
       .create({closed: false})
       .then(dbModel => {
@@ -24,7 +18,7 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
 
-  saveRound:function(req, res) {
+  saveRound:(req, res) => {
     const {playerID, gameID, index} = req.body;
     db.Round
       //.findOneAndUpdate({ playerID, gameID, index }, req.body)//, {upsert: true}
@@ -44,21 +38,20 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
 
-  update: function(req, res) {
-    console.log(req.params)
+  update: (req, res) => {
     db.Player
       .findOneAndUpdate({ gID: req.body.gID }, req.body, {upsert: true, returnNewDocument: true})
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
 
-  getStats: function(req, res) {
+  getStats: (req, res) => {
     db.Round
       console.log("running")
       .findOneAndUpdate({ playerID: req.body.playerID },)
   },
   
-  getGames: function(req, res) {
+  getGames: (req, res) => {
     console.log(req.params.id);
     db.Game.find({win: req.params.id})
       .populate('rounds')
@@ -66,14 +59,6 @@ module.exports = {
         res.json(games);
       })
       .catch(err => res.json(err));
-  },
-
-  remove: function(req, res) {
-    db.Book
-      .findById({ _id: req.params.id })
-      .then(dbModel => dbModel.remove())
-      .then(dbModel => res.json(dbModel))
-      .catch(err => res.status(422).json(err));
   },
 
   updateGame: (req, res) => {

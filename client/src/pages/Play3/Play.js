@@ -147,12 +147,12 @@ class Play extends Component {
     return new Promise((resolve, reject) => {
       db.table(store)
         .toArray()
-        .then((data) => resolve(data[0]));
+        .then((data) => resolve(data[0]))
+        .catch((err) => reject(err));
     });
   };
 
   getStats = () => {
-        //logGame Stats
     db.table('userProfile')
       .toArray()
       .then(profile =>{
@@ -169,8 +169,6 @@ class Play extends Component {
         .then((game) => {
           //Initialize round array if it doesn't already exist
           if (game.rounds.length !== round) {
-            //pushes last round to mongo
-            //if ( round > 1) this.timeUp();
             game.rounds.push({
               gameID,
               playerID,
@@ -179,7 +177,7 @@ class Play extends Component {
           }
 
           //Create New guess
-          const newGuess =  {correct: match.name, guess: name};
+          const newGuess =  {correct: match.name, guess: name, isMatch: (match.name === name)};
 
           //Push new guess to array
           game.rounds[round - 1].guesses.push(newGuess);
@@ -203,15 +201,11 @@ class Play extends Component {
         .then(({rounds})=>{
           const index = rounds.length-1;
           const round = rounds[index];
+          if (!round) return; //exit if no guesses made 
           round.index = index;
           API.saveRound(round)
              .then(data => console.log(data))
              .catch(e => console.log(e));
-          // const game = {
-          //   id: round.gameID,
-          //   win: round.playerID,
-          //   lose: null
-          // }
           API.updateGame({
             id: round.gameID,
             win: round.playerID,
