@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { db }from "../../utils";
 import Collapsible from 'react-collapsible';
 import Nav from "../../components/Nav";
-import { db } from "../../utils";
 import { Container } from "../../components/Grid";
 import Modal from "react-responsive-modal";
 import gameTypes from "../../gameTypes.json";
