@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { db, board }from "../../utils";
 import {Container} from "../../components/Grid";
 import Nav from "../../components/Nav";
+import { Link } from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
 import Modal from "react-responsive-modal";
@@ -20,6 +21,7 @@ class Play extends Component {
     login: false,
     matches: [],
     open: false,
+    openResults: false,
     round: 1,
     symbols: {sym1:[],sym2:[]},
     time:0,
@@ -82,6 +84,10 @@ class Play extends Component {
 
   closeModal = () => {
     this.setState({ open: false });
+  };
+
+  closeResultsModal = () => {
+    this.setState({ openResults: false });
   };
 
   isSelected = (boardID) => {
@@ -234,6 +240,7 @@ class Play extends Component {
     
     // //Define Variables to be passed as props    
     const { open} = this.state,  
+          { openResults } = this.state,
           {sym1, sym2} = this.state.symbols;          
     
     //JSX of components to be returned by the render function
@@ -284,6 +291,30 @@ class Play extends Component {
             </div>
           </div>
         </Modal>
+  
+
+        <Modal open={openResults} center showCloseIcon={false}
+          onClose={this.closeResultsModal} >
+          <div className="card">
+            <div className="card-header">
+              <h1 id="modalTitle" className="title">Time's up! </h1> <h2> Here's how you did:</h2>
+            </div>
+            <div className="card-body">  
+            <p style={{display: "inline-block"}}> *stats/results go here* </p>
+              <Row>
+                <Link to="/options">
+                  <Button bsStyle="primary" style={{margin: "5px"}}> Play again </Button>
+                </Link>
+                <Link to="/stats">
+                  <Button bsStyle="primary" style={{margin: "5px"}}> More Stats </Button>
+                </Link>
+              </Row>
+            </div>
+          </div>
+        </Modal>
+
+
+
       </Container>
     </div>
     );
@@ -358,9 +389,13 @@ class Play extends Component {
   }
 
   timeUp() {
-    //increase round index 
+    if (this.state.time === 0){
+      this.setState({
+        openResults: true,
+        open: false
+      });
+    }
     
-
     this.pushRoundToMongo();
     
     //If round index < 5 start new Round else end game

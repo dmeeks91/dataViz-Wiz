@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Collapsible from 'react-collapsible';
 import Nav from "../../components/Nav";
+import { db } from "../../utils";
 import { Container } from "../../components/Grid";
 import Modal from "react-responsive-modal";
 import gameTypes from "../../gameTypes.json";
@@ -79,10 +80,10 @@ class Options extends Component {
           <Nav title="DataViz-Wiz"/>
           <Container>       
             <div className="card">
-              <Collapsible transitionTime={150} trigger="Time Trial"> <h1 onClick = {()=>this.setModal()}> ? </h1>
+              <Collapsible transitionTime={150} trigger="Time Trial" style={{margin: 100}}> <button style={{margin: 5}} onClick = {()=>this.setModal()}> How to play? </button>
                 <Modal open={open} onClose={this.closeModal} center>
                   <div>
-                    <h1> Hello </h1>
+                    <h1> Click on the matching symbols and select the correct name. Get as many as you can before time runs out! </h1>
                   </div>
                 </Modal>
                 <Link to="/play">
@@ -91,8 +92,10 @@ class Options extends Component {
               </Collapsible>
             </div>
             <div className="card">
-              <Collapsible transitionTime={150} trigger="Versus">
-                <p>Get Started</p>
+              <Collapsible transitionTime={150} trigger="Versus" style={{margin: 100}}>
+                <Button
+                 bsStyle="primary"
+                >Coming soon</Button>
               </Collapsible>
             </div>
           </Container>
