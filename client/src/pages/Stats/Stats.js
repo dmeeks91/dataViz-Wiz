@@ -13,20 +13,9 @@ class Stats extends Component {
     name: "",
     logIn: false,
     playerID: "",
-
+    games: [],
+    stats: []
   };
-
-
-  // resizeContainer() {    
-  //   let sHeight = window.screen.height;
-  //   this.setState({
-  //     height: (window.screen.width < 500) ? sHeight * .90 : sHeight * 2
-  //   });
-  // }
-
-  // componentWillUnmount() {  
-  //   window.removeEventListener("resize", () => this.resizeContainer());
-  // }
 
   handleInputChange = event => {
     const { name, value } = event.target;
@@ -55,13 +44,54 @@ class Stats extends Component {
     .toArray()
     .then(profile => {
           this.setState({playerID: profile[0].id})
-          console.log(this.state.playerID)
+          this.getGames();
     })
-    .then(
-      API.getStats(this.state.playerID)
-      .then(data => console.log(data))
-      .catch(e => console.log(e))
-    )
+    // .then(
+    //   API.getStats(this.state.playerID)
+    //   .then(data => console.log(data))
+    //   .catch(e => console.log(e))
+    // )
+  }
+
+  getGames = () => {
+    db.table('userProfile')
+      .toArray()
+      .then(profile =>{
+        API.getGames(profile[0].id)
+        .then((data)=> {
+          const games = data.data; 
+          this.setState({games});
+          this.getAllGameStats();
+        });
+      });
+  }
+
+  getAllGameStats = () => {
+    this.setState({stats: []});
+    this.state.games.forEach((game, index) => {
+      return this.getGameStats(index);
+    })
+  }
+
+  getGameStats = (index) => {
+    const gameStats = {};
+    const game= this.state.games[index].rounds.forEach((round, rIndex) => {
+      gameStats[`round_${rIndex}`] = this.getRoundStats(this.state.games[index], rIndex);
+    });
+    
+    this.setState({stats: [...this.state.stats, gameStats]});
+  }
+
+  getRoundStats = (game, index) => {
+    const guesses = game.rounds[index].guesses;
+    const questionArr = guesses.map(guess => guess.correct).filter((item, i, ar) => ar.indexOf(item) === i);
+    const currStats = questionArr.map(sym => {
+        const correct = guesses.filter(guess => guess.guess === sym && guess.isMatch).length;
+        const allGuesses = guesses.filter(guess => guess.correct === sym).length;
+        const accuracy = correct / allGuesses;
+        return {correct, allGuesses, accuracy, name: sym};
+    })
+    return currStats;
   }
 
 
