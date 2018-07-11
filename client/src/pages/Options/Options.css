@@ -1,41 +1,41 @@
-.card {
-    margin: 2%;
+
+.container {
+    margin-top: 18px;
+    padding: 0;
 }
 
 .Collapsible {
     width: 300px;
+    margin: 10px;
 }
 
 .Collapsible__trigger {
     font-size: 32px;
     display: block;
     background-color: #eb6864;
+    color: rgb(252, 229, 229);
 }
 
 .Collapsible__contentInner {
     margin-top: 10px;
+    margin-bottom: 8px;
     text-decoration: none;
 }
 
-p {
-    color: rgb(56, 56, 56)
-}
 
-p:hover {
-    background-color:  #fd7772; 
-    display: block;
-    text-decoration: none;
-}
-
-p:active {
-    background-color:  #f81008; 
-    display: block;
-    text-decoration: none;
+.row {
+    margin: none;
 }
 
 div {
 justify-content: center;
 padding: 0;
 text-decoration: none;
+}
 
+@media (min-width: 576px) {
+.col-sm-2 {
+   max-width: none;
+
+}
 }
