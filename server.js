@@ -5,19 +5,12 @@ const mongoose = require("mongoose");
 const routes = require("./routes");
 const app = express();
 const PORT = process.env.PORT || 3001;
-const io = require('socket.io')();
+const http = require("http").Server(app);
+const io = require('socket.io')(http);
+const socket = require("./controllers/socketController");
 
-io.on('connection', (client) => {
-    client.on('subscribeToTimer', (interval) => {
-        console.log(`client is subscribing to timer with interval ${interval}`);
-        setInterval(() => {
-            client.emit('timer', new Date());
-        })
-    });
 
-})
-
-io.listen(PORT);
+io.on('connection', (client) => socket.io.connect(client));
 
 // Define middleware here
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,6 +26,6 @@ app.use(routes);
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/vizwiz" );
 
 // Start the API server
-app.listen(PORT, function() {
+http.listen(PORT, function() {
   console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
 });
