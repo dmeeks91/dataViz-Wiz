@@ -58,9 +58,9 @@ class Options extends Component {
       const options = Object.keys(gameOptions).map((key, index) =>{
         // console.log(gameOptions[index])
         return (
-          <Button className="col-sm-2" 
-            bsStyle="primary"
+          <Button className="col-sm-2 subbtn" 
             key={gameOptions[key]}
+            style={{textDecorationLine: "none"}}
             block
             onClick={() => this.saveTime(gameOptions[index])}
           >{`${gameOptions[index]} seconds`}</Button>
@@ -80,7 +80,7 @@ class Options extends Component {
           <Nav title="DataViz-Wiz"/>
           <Container>       
             <div className="card">
-              <Collapsible transitionTime={150} trigger="Time Trial" style={{margin: 100}}> <button style={{margin: 5}} onClick = {()=>this.setModal()}> How to play? </button>
+              <Collapsible transitionTime={150} trigger="Time Trial" style={{margin: 100}}> <Button bsStyle="primary" style={{margin: 10}} onClick = {()=>this.setModal()}> How to play? </Button>
                 <Modal open={open} onClose={this.closeModal} center>
                   <div>
                     <h1> Click on the matching symbols and select the correct name. Get as many as you can before time runs out! </h1>

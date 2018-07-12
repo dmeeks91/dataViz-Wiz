@@ -8,6 +8,8 @@ import "./Login.css";
 import {Redirect} from "react-router-dom";
 import { toast } from 'react-toastify';
 import API from "../../utils/API";
+import logo from './symbol28.png';
+
 
 
 
@@ -62,13 +64,15 @@ class Login extends Component {
     }
     return (  
         <div>
-            <Nav title="DataViz-Wiz"/>
+            <Nav title=""/>
             <Container>
                 <div className="card">
                     <div className="card-body">
                         {/* dataViz-Wiz logo goes here */}
+                        <img src={logo} className="App-logo" alt="logo" />
+                        <h1  style={{ fontFamily:"'Bungee Inline', cursive", fontWeight:"450",  color:"#eb6864", padding:"5px"}}>  DataViz Wiz </h1>
                     </div>
-                    <div className="card-footer">
+                    <div className="card-footer" style={{backgroundColor: "white", border:"none"}}>
                         <GoogleLogin
                             clientId="354068819828-89tkvid8u657nkilofocsgj9pbg3nh99.apps.googleusercontent.com"
                             onSuccess={(user)=>this.onLogin(user)}

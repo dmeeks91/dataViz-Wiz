@@ -54,7 +54,9 @@ class Dashboard extends Component {
               </Link>
             </div>
             <div className="col logoutCol" onClick={()=>this.logOut()}>
+                <Link className="dashLink" to="/">
                 <h1 className="dashBtn">LOGOUT</h1>
+                </Link>
             </div>
           </div>
         </div>

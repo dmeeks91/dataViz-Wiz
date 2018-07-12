@@ -65,7 +65,8 @@ class Learn extends Component {
     const { open } = this.state,
           symName =  (this.state.symbol) ? this.state.symbol.name :"",
           symUrl =  (this.state.symbol) ? this.state.symbol.filepath :"",
-          symDesc =  (this.state.symbol) ? this.state.symbol.description :"";
+          symDesc =  (this.state.symbol) ? this.state.symbol.description :"",
+          symSource = (this.state.symbol) ? this.state.symbol.infoLink :"";
 
     //JSX of components to be returned by the render function
     return (  
@@ -94,6 +95,7 @@ class Learn extends Component {
                   </div>
                   <div className="col-sm-8">
                     <p>{symDesc}</p>
+                    <a href={symSource} target="_blank">Source</a>
                   </div>
                 </div>
               </div>
