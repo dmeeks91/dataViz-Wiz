@@ -11,3 +11,18 @@
     font-weight: bold;
     font-family: Roboto;
 }
+
+svg.gLogo {
+    width: 90%;
+    height: 40px;
+}
+
+
+/* @media screen and (max-width: 784px) {
+    .gBtn {
+        width: 80%;
+        height: 40%;
+    }
+    
+    
+    } */
