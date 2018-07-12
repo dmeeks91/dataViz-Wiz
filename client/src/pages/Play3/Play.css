@@ -1,4 +1,7 @@
 @import '../../../node_modules/react-selectize/themes/index.css';
+.bg-primary {
+  background-color: #fa5553 !important;
+}
 
 .App {
     text-align: center;
