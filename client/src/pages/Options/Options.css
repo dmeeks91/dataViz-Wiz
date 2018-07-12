@@ -1,3 +1,16 @@
+.bg-primary {
+    background-color: #fa5553 !important;
+}
+
+.card {
+    border: 0px;
+}
+
+.subbtn {
+    background-color: #f0c066;
+    border-color: #f0c066;
+    color: white;
+}
 
 .container {
     margin-top: 18px;
@@ -12,8 +25,8 @@
 .Collapsible__trigger {
     font-size: 32px;
     display: block;
-    background-color: #eb6864;
-    color: rgb(252, 229, 229);
+    background-color: #78a3d7;
+    color: white;
 }
 
 .Collapsible__contentInner {

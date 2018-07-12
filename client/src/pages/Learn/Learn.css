@@ -1,3 +1,7 @@
+.bg-primary {
+    background-color: #fa5553 !important;
+}
+
 .container {
     text-align: center;
     margin: auto;

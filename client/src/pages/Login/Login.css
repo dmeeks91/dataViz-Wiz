@@ -11,3 +11,7 @@
     font-weight: bold;
     font-family: Roboto;
 }
+
+.bg-primary {
+    background-color: #fa5553 !important;
+}
