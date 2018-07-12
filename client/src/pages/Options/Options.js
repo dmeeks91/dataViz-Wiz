@@ -58,8 +58,7 @@ class Options extends Component {
       const options = Object.keys(gameOptions).map((key, index) =>{
         // console.log(gameOptions[index])
         return (
-          <Button className="col-sm-2" 
-            bsStyle="primary"
+          <Button className="col-sm-2 subbtn" 
             key={gameOptions[key]}
             style={{textDecorationLine: "none"}}
             block

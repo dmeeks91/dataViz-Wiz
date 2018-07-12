@@ -1,3 +1,7 @@
+.bg-primary {
+    background-color: #fa5553 !important;
+}
+
 .container {
     text-align: center;
 }
@@ -30,17 +34,18 @@
 }
 
 .playCol {
-    background-color: #7a252a;
+    background-color: #fa5553;
 }
 
 .learnCol {
-    background-color: #6d693a;
+    background-color: #f0c066;
 }
 
 .statsCol {
-    background-color: #3c406f;
+    background-color: #adc25d;
 }
 
 .logoutCol {
-    background-color: #3b6e5f;
+    background-color: #78a3d7;
+    color: white;
 }
