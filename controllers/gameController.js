@@ -52,7 +52,7 @@ module.exports = {
   },
   
   getGames: (req, res) => {
-    console.log(req.params.id);
+    //console.log(req.params.id);
     db.Game.find({win: req.params.id})
       .populate('rounds')
       .then(games => {

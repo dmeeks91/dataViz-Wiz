@@ -37,7 +37,7 @@ class Stats extends Component {
               this.setState({logIn: true});
             };
         });
-  }
+  };
 
   componentDidMount() {
     db.table('userProfile')
@@ -46,12 +46,7 @@ class Stats extends Component {
           this.setState({playerID: profile[0].id})
           this.getGames();
     })
-    // .then(
-    //   API.getStats(this.state.playerID)
-    //   .then(data => console.log(data))
-    //   .catch(e => console.log(e))
-    // )
-  }
+  };
 
   getGames = () => {
     db.table('userProfile')
@@ -64,23 +59,25 @@ class Stats extends Component {
           this.getAllGameStats();
         });
       });
-  }
+  };
 
   getAllGameStats = () => {
     this.setState({stats: []});
     this.state.games.forEach((game, index) => {
       return this.getGameStats(index);
-    })
-  }
+    });
+    // db.table('userProfile')
+    //   .update(this.state.playerID,{stats: this.state.stats});
+  };
 
   getGameStats = (index) => {
     const gameStats = {};
-    const game= this.state.games[index].rounds.forEach((round, rIndex) => {
+    this.state.games[index].rounds.forEach((round, rIndex) => {
       gameStats[`round_${rIndex}`] = this.getRoundStats(this.state.games[index], rIndex);
     });
     
     this.setState({stats: [...this.state.stats, gameStats]});
-  }
+  };
 
   getRoundStats = (game, index) => {
     const guesses = game.rounds[index].guesses;
@@ -92,8 +89,7 @@ class Stats extends Component {
         return {correct, allGuesses, accuracy, name: sym};
     })
     return currStats;
-  }
-
+  };
 
   render() {    
     //Redirect to Login page if not logged in
@@ -167,7 +163,7 @@ class Stats extends Component {
       </Container>
     </div>
     );
-  }
+  };
 }
 
 export default Stats;

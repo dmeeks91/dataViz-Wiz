@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { db, board, getStats }from "../../utils";
+import { db, board }from "../../utils";
 import {Container} from "../../components/Grid";
 import Nav from "../../components/Nav";
 import { Link } from "react-router-dom";
@@ -28,8 +28,7 @@ class Play extends Component {
     timeInterval: 0,
     timer: {},
     playerID: "",
-    gameID: "",
-    roundSummary: [],
+    gameID: ""
   };
 
   alert = (match) => {
@@ -70,12 +69,11 @@ class Play extends Component {
               this.setState({
                 playerID: profile[0].id,
                 time: profile[0].timeInterval,
-                timeInterval: profile[0].timeInterval,
-                gameID: profile[0].game._id
+                timeInterval: profile[0].timeInterval
               })
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
-              this.startNewGame();
+              //this.startNewGame();
             }
         });  
   };
@@ -164,6 +162,15 @@ class Play extends Component {
         .catch((err) => reject(err));
     });
   };
+
+  getStats = () => {
+    db.table('userProfile')
+      .toArray()
+      .then(profile =>{
+        API.getGames(profile[0].id)
+        .then((data)=>console.log(data));
+      });
+  }
   
   guessName = ({id, name}) => {    
     const { round, matches, gameID, playerID } = this.state;
@@ -199,38 +206,32 @@ class Play extends Component {
     }
   };
   
-  onGetStats = (stats) => {
-    this.setState({roundSummary:stats});
-  }
-
   pushRoundToMongo = () => {
     //push most recent round to mongoDB
     this.getIDBTable("game")
-        .then(({rounds})=>{          
-          rounds.forEach((round, index) => {
-            //if (!round) return; //exit if no guesses made 
-            round.index = index;
-            API.saveRound(round)
-              .then(() => {
-                API.updateGame({
-                    id: round.gameID,
-                    win: round.playerID,
-                    lose: null
-                  }).then(() => {
-                    getStats({ _id: this.state.gameID, type: 0, 
-                      playerID: this.state.playerID}, this.onGetStats);
-                  })
+        .then(({rounds})=>{
+          const index = rounds.length-1;
+          const round = rounds[index];
+          if (!round) return; //exit if no guesses made 
+          round.index = index;
+          API.saveRound(round)
+             .then(() => {
+               API.updateGame({
+                  id: round.gameID,
+                  win: round.playerID,
+                  lose: null
+                }).then(() => {
+                  this.getStats();
+                })
                   .catch(e => console.log(e));
-              })
-              .catch(e => console.log(e));
-            });          
+             })
+             .catch(e => console.log(e));
         });
   };
 
   resizeContainer() {    
     this.setState({
       height: window.innerHeight * .90
-      
     });
   };
 
@@ -241,7 +242,7 @@ class Play extends Component {
     }
     
     // //Define Variables to be passed as props    
-    const { open } = this.state,  
+    const { open} = this.state,  
           { openResults } = this.state,
           {sym1, sym2} = this.state.symbols;          
     
@@ -254,7 +255,11 @@ class Play extends Component {
           time= {this.state.time}//{ (this.state.timer === 0) ? `Time's Up!`: this.state.timer }
       />
       <Container style={{height:this.state.height}}>
-        {sym1.map(symbol =>{ 
+
+        <div>
+          This is the value of the timestamp: {this.state.timestamp}
+        </div>
+        {/* {sym1.map(symbol =>{ 
           const boardID = `sym1_${symbol.id}`;
           return (
             <Symbol
@@ -280,6 +285,7 @@ class Play extends Component {
             />
           )}
         )}
+
         <Modal open={open} center showCloseIcon={false}
           onClose={this.closeModal} closeOnOverlayClick={false} >
           <div className="card">
@@ -293,33 +299,16 @@ class Play extends Component {
             </div>
           </div>
         </Modal>
+  
+
         <Modal open={openResults} center showCloseIcon={false}
           onClose={this.closeResultsModal} >
           <div className="card">
             <div className="card-header">
-              <h1 id="modalTitle" className="title">Time's up! </h1>
+              <h1 id="modalTitle" className="title">Time's up! </h1> <h2> Here's how you did:</h2>
             </div>
             <div className="card-body">  
-<<<<<<< HEAD
-            <ul class="list-group">
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                Correct:
-                <span class="badge badge-primary badge-pill">4</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                Total Guesses:
-                <span class="badge badge-primary badge-pill">2</span>
-              </li>
-            </ul>
-            </div>
-=======
-            {/* <p style={{display: "inline-block"}}> *stats/results go here* </p> */}
-              <Row>
-                <ul className="list-group">
-
-                </ul>
-              </Row>
->>>>>>> master
+            <p style={{display: "inline-block"}}> *stats/results go here* </p>
               <Row>
                 <Link to="/options">
                   <Button bsStyle="primary" style={{margin: "5px"}}> Play again </Button>
@@ -328,8 +317,9 @@ class Play extends Component {
                   <Button bsStyle="primary" style={{margin: "5px"}}> More Stats </Button>
                 </Link>
               </Row>
+            </div>
           </div>
-        </Modal>
+        </Modal> */}
 
 
 
@@ -369,15 +359,20 @@ class Play extends Component {
   }
 
   startNewGame() { 
-    db.table('game').clear();
-    //Add game in indexedDB
-    db.table('game')
-      .add({id:1, rounds:[]})
-      .then(()=>{
-        //this.setState({gameID: data._id});
-        this.setBoard();          
-        this.run();
-      });
+    //Add New game to Mongo
+    API.newGame()
+    .then( ({data}) => {
+      //Clear game in indexedDB
+      db.table('game').clear();
+      //Add game in indexedDB
+      db.table('game')
+        .add({id:1, rounds:[]})
+        .then(()=>{
+          this.setState({gameID: data._id});
+          this.setBoard();          
+          this.run();
+        })
+    })
   };
 
   startRound() {
