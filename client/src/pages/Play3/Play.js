@@ -201,6 +201,7 @@ class Play extends Component {
   
   onGetStats = (stats) => {
     this.setState({roundSummary:stats});
+    // console.log(this.state.roundSummary[this.state.playerID].allGuesses)
   }
 
   pushRoundToMongo = () => {
@@ -241,13 +242,14 @@ class Play extends Component {
     }
     
     // //Define Variables to be passed as props    
-    const { open } = this.state,  
-          { openResults } = this.state,
-          {sym1, sym2} = this.state.symbols;          
+    const { open, openResults, roundSummary, playerID } = this.state,  
+          {sym1, sym2} = this.state.symbols,
+          myResults = (roundSummary[playerID]) ? roundSummary[playerID] : {allGuesses: 0, correct: 0};
+
     
     //JSX of components to be returned by the render function
     return ( 
-    <div>
+    <div className="container-div">
       <Nav 
           title="DataViz-Wiz"
           page="play"
@@ -293,33 +295,24 @@ class Play extends Component {
             </div>
           </div>
         </Modal>
-        <Modal open={openResults} center showCloseIcon={false}
+        <Modal style= {{ width: 400 }} open={openResults} center showCloseIcon={false}
           onClose={this.closeResultsModal} >
           <div className="card">
             <div className="card-header">
               <h1 id="modalTitle" className="title">Time's up! </h1>
             </div>
             <div className="card-body">  
-<<<<<<< HEAD
-            <ul class="list-group">
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                Correct:
-                <span class="badge badge-primary badge-pill">4</span>
+            <ul className="list-group">
+              <li style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
+                Correct: 
+                <span className="badge badge-primary badge-pill"> {myResults.correct} </span>
               </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                Total Guesses:
-                <span class="badge badge-primary badge-pill">2</span>
+              <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
+                Total Guesses: 
+                <span className="badge badge-primary badge-pill"> {myResults.allGuesses} </span>
               </li>
             </ul>
             </div>
-=======
-            {/* <p style={{display: "inline-block"}}> *stats/results go here* </p> */}
-              <Row>
-                <ul className="list-group">
-
-                </ul>
-              </Row>
->>>>>>> master
               <Row>
                 <Link to="/options">
                   <Button bsStyle="primary" style={{margin: "5px"}}> Play again </Button>
@@ -334,7 +327,7 @@ class Play extends Component {
 
 
       </Container>
-    </div>
+      </div>
     );
   };
   

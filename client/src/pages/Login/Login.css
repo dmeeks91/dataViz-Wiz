@@ -11,6 +11,11 @@
     font-weight: bold;
     font-family: Roboto;
 }
+
+.gBtn .row {
+    box-shadow: 0 2px 4px 0 #aabe5b;
+}
+
 svg.gLogo {
     width: 90%;
     height: 40px;

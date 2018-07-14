@@ -113,7 +113,7 @@ class Stats extends Component {
 
           <div className="row">
             <div className="col-sm-2">
-          <img alt="userImage" style={{width: 250, marginTop: 18}} src={this.state.imageUrl}/>
+          <img alt="userImage" style={{width: 200, marginTop: 18}} src={this.state.imageUrl}/>
             </div>
             <div className="col-sm-8">
               <p style={{fontSize: 40, marginTop:40, fontWeight: 700, textDecoration: "underline"}}> {this.state.name} </p>
