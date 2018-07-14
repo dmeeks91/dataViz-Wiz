@@ -28,7 +28,8 @@ class Play extends Component {
     timeInterval: 0,
     timer: {},
     playerID: "",
-    gameID: ""
+    gameID: "",
+    roundSummary: [],
   };
 
   alert = (match) => {
@@ -163,16 +164,6 @@ class Play extends Component {
         .catch((err) => reject(err));
     });
   };
-
-  getStats = () => {
-    db.table('userProfile')
-      .toArray()
-      .then(profile =>{
-        // API.getGames(profile[0].id)
-        //    .then((data)=>console.log(data));
-        getStats(profile[0].game);
-      });
-  }
   
   guessName = ({id, name}) => {    
     const { round, matches, gameID, playerID } = this.state;
@@ -208,6 +199,10 @@ class Play extends Component {
     }
   };
   
+  onGetStats = (stats) => {
+    this.setState({roundSummary:stats});
+  }
+
   pushRoundToMongo = () => {
     //push most recent round to mongoDB
     this.getIDBTable("game")
@@ -222,8 +217,8 @@ class Play extends Component {
                     win: round.playerID,
                     lose: null
                   }).then(() => {
-                    getStats({ _id: this.state.gameID,
-                    type: 0});
+                    getStats({ _id: this.state.gameID, type: 0, 
+                      playerID: this.state.playerID}, this.onGetStats);
                   })
                   .catch(e => console.log(e));
               })
@@ -245,7 +240,7 @@ class Play extends Component {
     }
     
     // //Define Variables to be passed as props    
-    const { open} = this.state,  
+    const { open } = this.state,  
           { openResults } = this.state,
           {sym1, sym2} = this.state.symbols;          
     
@@ -297,8 +292,6 @@ class Play extends Component {
             </div>
           </div>
         </Modal>
-  
-
         <Modal open={openResults} center showCloseIcon={false}
           onClose={this.closeResultsModal} >
           <div className="card">
@@ -306,7 +299,12 @@ class Play extends Component {
               <h1 id="modalTitle" className="title">Time's up! </h1> <h2> Here's how you did:</h2>
             </div>
             <div className="card-body">  
-            <p style={{display: "inline-block"}}> *stats/results go here* </p>
+            {/* <p style={{display: "inline-block"}}> *stats/results go here* </p> */}
+              <Row>
+                <ul className="list-group">
+
+                </ul>
+              </Row>
               <Row>
                 <Link to="/options">
                   <Button bsStyle="primary" style={{margin: "5px"}}> Play again </Button>
@@ -357,20 +355,15 @@ class Play extends Component {
   }
 
   startNewGame() { 
-    //Add New game to Mongo
-    // API.newGame()
-    // .then( ({data}) => {
-      //Clear game in indexedDB
-      db.table('game').clear();
-      //Add game in indexedDB
-      db.table('game')
-        .add({id:1, rounds:[]})
-        .then(()=>{
-          //this.setState({gameID: data._id});
-          this.setBoard();          
-          this.run();
-        })
-    // })
+    db.table('game').clear();
+    //Add game in indexedDB
+    db.table('game')
+      .add({id:1, rounds:[]})
+      .then(()=>{
+        //this.setState({gameID: data._id});
+        this.setBoard();          
+        this.run();
+      });
   };
 
   startRound() {

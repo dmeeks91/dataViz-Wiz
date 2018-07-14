@@ -2,10 +2,7 @@ import openSocket from 'socket.io-client';
 const socket = openSocket('http://localhost:3000');
 
 function joinGame(details, cb){
-    socket.on(`joined`, (game) => {
-        console.log(game);
-        cb(game);
-    });
+    socket.on(`joined`, (game) => cb(game));
     socket.emit(`joinGame`, details);
 }
 
@@ -19,8 +16,8 @@ function endRound(gameObj, cb){
     socket.emit(`endRound`, gameObj);
 }
 
-function getStats(gameObj){
-    socket.on(`stats`, (stats) => console.log(stats));
+function getStats(gameObj, cb){
+    socket.on(`stats`, (stats) => cb(stats));
     socket.emit(`getStats`, gameObj);
 }
 

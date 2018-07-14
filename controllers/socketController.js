@@ -3,8 +3,6 @@ const db = require("../models");
 const io = {
     connect: (client, server) => {
         client.on('joinGame', (game) => {
-            //console.log("Joining Game");
-            //console.log(game);
             if (game.type === 0)
             {
                 db.Game.create(
@@ -51,7 +49,9 @@ const io = {
             {
                 io.getGameStats(game._id)
                   .then(data => {
-                      client.emit('stats',data[0]);
+                      const stats = {};
+                      stats[game.playerID] = data[0];
+                      client.emit('stats', stats);
                   });
             }
             else
@@ -110,9 +110,9 @@ const io = {
     getRoundStats: (game, index) => {
         const guesses = game.rounds[index].guesses;
         const correct = guesses.filter(guess => guess.isMatch).length;
-        const incorrect = guesses.filter(guess => !guess.isMatch).length;
+        const allGuesses = guesses.length;
 
-        return {correct, incorrect};
+        return {correct, allGuesses};
     }
 }
 
