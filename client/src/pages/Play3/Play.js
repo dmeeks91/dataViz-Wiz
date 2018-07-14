@@ -29,6 +29,7 @@ class Play extends Component {
     timer: {},
     playerID: "",
     gameID: "",
+    game:{},
     roundSummary: [],
   };
 
@@ -71,7 +72,8 @@ class Play extends Component {
                 playerID: profile[0].id,
                 time: profile[0].timeInterval,
                 timeInterval: profile[0].timeInterval,
-                gameID: profile[0].game._id
+                gameID: profile[0].game._id,
+                game: profile[0].game
               })
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());

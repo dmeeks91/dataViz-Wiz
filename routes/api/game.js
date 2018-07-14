@@ -11,6 +11,9 @@ router.route("/new-game")
 router.route("/save-round")
   .post(gameController.saveRound);
 
+router.route("/get-rounds/:id")
+  .get(gameController.getRounds);
+
 router.route("/get-stats")
   .get(gameController.getStats);
   
