@@ -64,7 +64,6 @@ class Login extends Component {
     }
     return (  
         <div>
-            <Nav title=""/>
             <Container>
                 <div className="card">
                     <div className="card-body">
