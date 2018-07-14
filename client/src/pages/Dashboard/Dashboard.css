@@ -15,6 +15,7 @@
 
 .dashBtn {    
     margin-top: 155px;
+    font-size: 200%;
 }
 
 .dashImg {
@@ -48,4 +49,11 @@
 .logoutCol {
     background-color: #78a3d7;
     color: white;
+}
+
+@media only screen and (max-width:320px){
+    .dashBtn {    
+        margin-top: 85%;
+        font-size: 200%;
+    }
 }
