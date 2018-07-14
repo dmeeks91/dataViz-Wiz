@@ -45,6 +45,14 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
 
+  getRounds: (req, res) => {
+    db.Round.find({playerID: req.params.id})
+      .then(rounds => {
+        res.json(rounds);
+      })
+      .catch(err => res.json(err));
+  },  
+
   getStats: (req, res) => {
     db.Round
       console.log("running")

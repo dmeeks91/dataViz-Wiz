@@ -2,6 +2,8 @@ import axios from "axios";
 
 export default  { 
   getGames: (id) => axios.get(`/api/games/${id}`),
+
+  getRounds: (playerID) => axios.get(`/api/get-rounds/${playerID}`), 
  
   getStats: (playerID) => axios.get("/api/get-stats", playerID),  
  
