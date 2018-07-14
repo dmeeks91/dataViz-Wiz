@@ -26,7 +26,7 @@ class Options extends Component {
     };
     
     onJoinedGame = (game) => {
-      console.log(game);
+      //console.log(game);
       if (game.players.length === 1 && game.type === 1)
       {
         toast.info(`Waiting for another person to join your game`,{
@@ -38,7 +38,9 @@ class Options extends Component {
         const other = game.players.map(player=>player.name)
                           .filter(player => player.name !== this.state.playerName)[0];
         toast.success(`Your game against ${other} begins now`);
+        //startGame(game,this.onGameStarted);
       }
+      
       startGame(game,this.onGameStarted);
     };
 
@@ -46,7 +48,9 @@ class Options extends Component {
       toast.dismiss();
       db.table('userProfile')
         .update(this.state.playerID,{game})
-        .then(()=>{this.setState({play:true})});
+        .then(()=>{
+          if (game.type === 0) this.setState({play:true})
+        });
       
     };
 

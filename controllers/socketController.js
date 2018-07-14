@@ -3,6 +3,8 @@ const db = require("../models");
 const io = {
     connect: (client, server) => {
         client.on('joinGame', (game) => {
+            //console.log("Joining Game");
+            //console.log(game);
             if (game.type === 0)
             {
                 db.Game.create(
@@ -27,7 +29,12 @@ const io = {
             }
         });
         client.on('startGame', (game) => {
-            server.to(game._id).emit('gameStarted', game);
+            if (game.type === 0 || game.players.length === 2)
+            {                
+                setTimeout(() => {
+                    server.to(game._id).emit('gameStarted', game);
+                }, 1500); 
+            }
         });
         client.on('endRound', (game) => {
             if (game.type === 0)
@@ -74,8 +81,9 @@ const io = {
                             resolve(games[0]);
                         }
                     }
-                    else if (games.length === 1)
+                    else if (!games.length)
                     {
+                        //console.log('Creating Game');
                         db.Game.create({closed: false, 
                             option, 
                             players:[{id: playerID, name: playerName}], 
