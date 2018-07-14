@@ -1,5 +1,5 @@
 import openSocket from 'socket.io-client';
-const socket = openSocket('http://localhost:3000');
+const socket = openSocket();//'http://localhost:3000'
 
 function joinGame(details, cb){
     socket.on(`joined`, (game) => cb(game));
