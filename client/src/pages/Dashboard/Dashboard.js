@@ -8,6 +8,7 @@ class Dashboard extends Component {
   state = {
     logOut: false,
     logIn: false,
+    height: 0
   };
 
   componentDidMount() {  
@@ -16,8 +17,14 @@ class Dashboard extends Component {
         .then(profile => {
             //redirect to login screen if not logged in
             if (!profile.length) this.setState({ logIn: true });
-        });    
+        });  
+    this.resizeContainer();
+    window.addEventListener("resize", () => this.resizeContainer());  
   };
+
+  componentWillUnmount() {  
+    window.removeEventListener("resize", () => this.resizeContainer());
+  }
 
   logOut(){
     db.table('userProfile')
@@ -27,6 +34,12 @@ class Dashboard extends Component {
       })
   };
 
+  resizeContainer() {    
+    this.setState({
+      height: window.innerHeight * .90
+    });
+  };
+
   render() {
     if (this.state.logOut || this.state.logIn) {
         return <Redirect to="/"/>;
@@ -34,7 +47,7 @@ class Dashboard extends Component {
     return (  
       <div>
         <Nav title="DataViz-Wiz"/>
-        <div className="container" id="btnHolder">
+        <div className="container" style={{height:this.state.height}} id="btnHolder">
           <div className="row">
             <div className="col playCol">
               <Link className="dashLink" to="/options">
