@@ -27,11 +27,15 @@ const io = {
             }
         });
         client.on('startGame', (game) => {
-            if (game.type === 0 || game.players.length === 2)
+            if (game.type === 1 && game.players.length === 2)
             {                
                 setTimeout(() => {
                     server.to(game._id).emit('gameStarted', game);
                 }, 1500); 
+            }
+            else if (game.type === 0)
+            {
+                server.to(game._id).emit('gameStarted', game);
             }
         });
         client.on('endRound', (game) => {
