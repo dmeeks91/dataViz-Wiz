@@ -232,6 +232,7 @@ class Play extends Component {
   resizeContainer() {    
     this.setState({
       height: window.innerHeight * .90
+      
     });
   };
 
@@ -300,10 +301,20 @@ class Play extends Component {
           onClose={this.closeResultsModal} >
           <div className="card">
             <div className="card-header">
-              <h1 id="modalTitle" className="title">Time's up! </h1> <h2> Here's how you did:</h2>
+              <h1 id="modalTitle" className="title">Time's up! </h1>
             </div>
             <div className="card-body">  
-            <p style={{display: "inline-block"}}> *stats/results go here* </p>
+            <ul class="list-group">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Correct:
+                <span class="badge badge-primary badge-pill">4</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Total Guesses:
+                <span class="badge badge-primary badge-pill">2</span>
+              </li>
+            </ul>
+            </div>
               <Row>
                 <Link to="/options">
                   <Button bsStyle="primary" style={{margin: "5px"}}> Play again </Button>
@@ -312,7 +323,6 @@ class Play extends Component {
                   <Button bsStyle="primary" style={{margin: "5px"}}> More Stats </Button>
                 </Link>
               </Row>
-            </div>
           </div>
         </Modal>
 
