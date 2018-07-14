@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { db, board, joinGame }from "../../utils";
+import { db, board }from "../../utils";
 import {Container} from "../../components/Grid";
 import Nav from "../../components/Nav";
 import { Link } from "react-router-dom";
@@ -66,7 +66,6 @@ class Play extends Component {
             }
             else
             {
-              joinGame(profile[0].id);
               this.setState({
                 playerID: profile[0].id,
                 time: profile[0].timeInterval,

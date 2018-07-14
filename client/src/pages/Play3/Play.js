@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { db, board }from "../../utils";
+import { db, board, getStats }from "../../utils";
 import {Container} from "../../components/Grid";
 import Nav from "../../components/Nav";
 import { Link } from "react-router-dom";
@@ -69,7 +69,8 @@ class Play extends Component {
               this.setState({
                 playerID: profile[0].id,
                 time: profile[0].timeInterval,
-                timeInterval: profile[0].timeInterval
+                timeInterval: profile[0].timeInterval,
+                gameID: profile[0].game._id
               })
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
@@ -167,8 +168,9 @@ class Play extends Component {
     db.table('userProfile')
       .toArray()
       .then(profile =>{
-        API.getGames(profile[0].id)
-        .then((data)=>console.log(data));
+        // API.getGames(profile[0].id)
+        //    .then((data)=>console.log(data));
+        getStats(profile[0].game);
       });
   }
   
@@ -209,23 +211,24 @@ class Play extends Component {
   pushRoundToMongo = () => {
     //push most recent round to mongoDB
     this.getIDBTable("game")
-        .then(({rounds})=>{
-          const index = rounds.length-1;
-          const round = rounds[index];
-          if (!round) return; //exit if no guesses made 
-          round.index = index;
-          API.saveRound(round)
-             .then(() => {
-               API.updateGame({
-                  id: round.gameID,
-                  win: round.playerID,
-                  lose: null
-                }).then(() => {
-                  this.getStats();
-                })
+        .then(({rounds})=>{          
+          rounds.forEach((round, index) => {
+            //if (!round) return; //exit if no guesses made 
+            round.index = index;
+            API.saveRound(round)
+              .then(() => {
+                API.updateGame({
+                    id: round.gameID,
+                    win: round.playerID,
+                    lose: null
+                  }).then(() => {
+                    getStats({ _id: this.state.gameID,
+                    type: 0});
+                  })
                   .catch(e => console.log(e));
-             })
-             .catch(e => console.log(e));
+              })
+              .catch(e => console.log(e));
+            });          
         });
   };
 
@@ -355,19 +358,19 @@ class Play extends Component {
 
   startNewGame() { 
     //Add New game to Mongo
-    API.newGame()
-    .then( ({data}) => {
+    // API.newGame()
+    // .then( ({data}) => {
       //Clear game in indexedDB
       db.table('game').clear();
       //Add game in indexedDB
       db.table('game')
         .add({id:1, rounds:[]})
         .then(()=>{
-          this.setState({gameID: data._id});
+          //this.setState({gameID: data._id});
           this.setBoard();          
           this.run();
         })
-    })
+    // })
   };
 
   startRound() {

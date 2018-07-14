@@ -10,7 +10,7 @@ const io = require('socket.io')(http);
 const socket = require("./controllers/socketController");
 
 
-io.on('connection', (client) => socket.io.connect(client));
+io.on('connection', (client) => socket.io.connect(client, io));
 
 // Define middleware here
 app.use(bodyParser.urlencoded({ extended: true }));
