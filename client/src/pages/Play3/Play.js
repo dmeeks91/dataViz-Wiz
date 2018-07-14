@@ -219,7 +219,8 @@ class Play extends Component {
                     id: round.gameID,
                     win: round.playerID,
                     lose: null
-                  }).then(() => {
+                  })
+                  .then(() => {
                     getStats({ _id: this.state.gameID, type: 0, 
                       playerID: this.state.playerID}, this.onGetStats);
                   })
