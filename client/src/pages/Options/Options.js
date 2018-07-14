@@ -18,7 +18,8 @@ class Options extends Component {
       options: [],
       playerID: "",
       playerName:"",
-      play: false
+      play: false,
+      toastID: null
     };
     
     closeModal = () => {
@@ -26,30 +27,42 @@ class Options extends Component {
     };
     
     onJoinedGame = (game) => {
-      //console.log(game);
       if (game.players.length === 1 && game.type === 1)
       {
-        toast.info(`Waiting for another person to join your game`,{
+        toast.info(`Game Created, waiting for another person to join`,{
           autoClose: false
         });
       }
       else if (game.players.length === 2)
-      {
-        const other = game.players.map(player=>player.name)
-                          .filter(player => player.name !== this.state.playerName)[0];
-        toast.success(`Your game against ${other} begins now`);
-        //startGame(game,this.onGameStarted);
-      }
-      
+      {        
+        toast.info(`We found a game for you to play!`,{
+          autoClose: false
+        });
+      }      
       startGame(game,this.onGameStarted);
     };
 
-    onGameStarted = (game) => {
-      toast.dismiss();
+    onGameStarted = (game) => {      
       db.table('userProfile')
         .update(this.state.playerID,{game})
         .then(()=>{
-          if (game.type === 0) this.setState({play:true})
+          if (game.type === 0) 
+          {
+            this.setState({play:true});
+          }
+          else
+          {
+            toast.dismiss();
+            const other = game.players.map(player=>player.name)
+                          .filter(player => player.name !== this.state.playerName)[0];
+            toast.success(`Your game against ${other} begins now!`,{
+              autoClose: false
+            });
+            setTimeout(() => {
+              toast.dismiss();
+              this.setState({play:true})
+            })
+          }
         });
       
     };
@@ -61,34 +74,34 @@ class Options extends Component {
     };  
 
     saveTime (gameType, option) {   
-      console.log('SavingTime');     
-        db.table('userProfile')
-          .update(this.state.playerID,{timeInterval: option});
-        joinGame({
-          option,
-          playerID: this.state.playerID,
-          playerName: this.state.playerName,
-          type: gameType
-        }, this.onJoinedGame);
+      //console.log('SavingTime');     
+      db.table('userProfile')
+        .update(this.state.playerID,{timeInterval: option});
+      joinGame({
+        option,
+        playerID: this.state.playerID,
+        playerName: this.state.playerName,
+        type: gameType
+      }, this.onJoinedGame);
     };
 
     componentDidMount() {  
       db.table('userProfile')
         .toArray()
         .then(profile => {
-            //redirect to login screen if not logged in
-            if (!profile.length) 
-            {
-              this.setState({ logIn: true });
-            }
-            else
-            {
-              this.setState({
-                playerID: profile[0].id,
-                playerName: profile[0].firstName
-              })
-              this.getGameTypes();
-            }
+          //redirect to login screen if not logged in
+          if (!profile.length) 
+          {
+            this.setState({ logIn: true });
+          }
+          else
+          {
+            this.setState({
+              playerID: profile[0].id,
+              playerName: profile[0].firstName
+            })
+            this.getGameTypes();
+          }
         });  
 
     };
