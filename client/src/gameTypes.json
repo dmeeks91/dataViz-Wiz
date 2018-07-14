@@ -12,7 +12,13 @@
         }
     },
     {
-
+        "id": 1,
+        "name": "Versus",
+        "instructions": "",
+        "singlePlayer": false,
+        "options":{
+            "1":30
+        }
     }
     
 ]
