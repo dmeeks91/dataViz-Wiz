@@ -249,7 +249,7 @@ class Play extends Component {
     this.getIDBTable("game")
         .then(({rounds})=>{          
           rounds.forEach((round, index) => {
-            //if (!round) return; //exit if no guesses made 
+            //if (!round) return; exit if no guesses made 
             round.index = index;
             API.saveRound(round)
               .then(() => {
