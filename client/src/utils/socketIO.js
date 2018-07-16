@@ -16,9 +16,9 @@ function endRound(gameObj, cb){
     socket.emit(`endRound`, gameObj);
 }
 
-function getStats(gameObj, cb){
+function getStats(gameObj, playerID, cb){
     socket.on(`stats`, (stats) => cb(stats));
-    socket.emit(`getStats`, gameObj);
+    socket.emit(`getStats`, {game: gameObj, playerID});
 }
 
 export {
