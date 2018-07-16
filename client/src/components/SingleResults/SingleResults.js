@@ -1,22 +1,25 @@
 import React from "react";
+import { Table } from "react-bootstrap";
 import "./SingleResults.css";
 
 const SingleResults = ({myResults}) => {
   return (
-    <ul className="list-group">
-      <li style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-        Correct: 
-        <span className="badge badge-primary badge-pill"> {myResults.correct} </span>
-      </li>
-      <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-        Incorrect: 
-        <span className="badge badge-primary badge-pill"> {myResults.incorrect} </span>
-      </li>
-      <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-        Total Guesses: 
-        <span className="badge badge-primary badge-pill"> {myResults.allGuesses} </span>
-      </li>
-    </ul> 
+    <Table responsive striped bordered>
+      <tbody>
+        <tr>
+          <td>Correct</td>
+          <td> <span className="badge badge-primary badge-pill multi">{myResults.correct}</span></td>
+        </tr>
+        <tr>
+          <td>Inorrect</td>
+          <td> <span className="badge badge-primary badge-pill multi">{myResults.incorrect}</span></td>
+        </tr>
+        <tr>
+          <td>Total Guesses</td>
+          <td> <span className="badge badge-primary badge-pill multi">{myResults.allGuesses}</span></td>
+        </tr>
+      </tbody>
+    </Table>
   )
 };
 export default SingleResults;

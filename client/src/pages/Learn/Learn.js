@@ -83,7 +83,7 @@ class Learn extends Component {
             )
           })}
           <Modal open={open} onClose={this.closeModal} center>
-            <div className="card">
+            <div className="card" id="infoCard">
               <div className="card-header">
                 <h1 className="title">{symName}</h1>
               </div>
@@ -94,7 +94,7 @@ class Learn extends Component {
                       src={symUrl}/>
                   </div>
                   <div className="col-sm-8">
-                    <p>{symDesc}</p>
+                    <p id="symDesc">{symDesc}</p>
                     <a href={symSource} target="_blank">Source</a>
                   </div>
                 </div>

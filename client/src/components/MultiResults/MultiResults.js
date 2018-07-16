@@ -4,7 +4,7 @@ import "./MultiResults.css";
 
 const MultiResults = ({myResults, oppResults}) => {
   return (
-    <Table responsive>
+    <Table responsive striped bordered>
       <thead>
         <tr>
           <th></th>

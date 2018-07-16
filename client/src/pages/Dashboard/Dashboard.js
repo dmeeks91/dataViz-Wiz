@@ -8,7 +8,8 @@ class Dashboard extends Component {
   state = {
     logOut: false,
     logIn: false,
-    height: 0
+    container: {height:0},
+    dashBtn: {marginTop:0}
   };
 
   componentDidMount() {  
@@ -36,7 +37,8 @@ class Dashboard extends Component {
 
   resizeContainer() {    
     this.setState({
-      height: window.innerHeight * .90
+      container: {height:window.innerHeight * .90},
+      dashBtn: {marginTop: ((window.innerHeight *.88)/ 2)*.45}
     });
   };
 
@@ -44,31 +46,32 @@ class Dashboard extends Component {
     if (this.state.logOut || this.state.logIn) {
         return <Redirect to="/"/>;
     }
+    const { container, dashBtn } = this.state;
     return (  
       <div>
         <Nav title="DataViz-Wiz"/>
-        <div className="container" style={{height:this.state.height}} id="btnHolder">
-          <div className="row">
+        <div className="container" style={container} id="btnHolder">
+          <div className="row" id="row1">
             <div className="col playCol">
               <Link className="dashLink" to="/options">
-                <h1 className="dashBtn">PLAY</h1>
+                <h1 className="dashBtn" style={dashBtn}>PLAY</h1>
               </Link>
             </div>
             <div className="col learnCol">
               <Link className="dashLink" to="/learn">
-                <h1 className="dashBtn">LEARN</h1>
+                <h1 className="dashBtn" style={dashBtn}>LEARN</h1>
               </Link>
             </div>
           </div>
-          <div className="row">
+          <div className="row" id="row2">
             <div className="col statsCol">
               <Link className="dashLink" to="/stats">
-                <h1 className="dashBtn">STATS</h1>
+                <h1 className="dashBtn" style={dashBtn}>STATS</h1>
               </Link>
             </div>
             <div className="col logoutCol" onClick={()=>this.logOut()}>
                 <Link className="dashLink" to="/">
-                <h1 className="dashBtn">LOGOUT</h1>
+                <h1 className="dashBtn" style={dashBtn}>LOGOUT</h1>
                 </Link>
             </div>
           </div>
