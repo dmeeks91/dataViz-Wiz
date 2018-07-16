@@ -71,9 +71,9 @@ const io = {
                     if (games.length === 1)
                     {
                         const { _id, players } = games[0];
-                        //if (players.indexOf(playerID) === -1)
                         if(!players.filter(player => player.id === _id).length)
                         {
+                            //you are not one of the players already in the game
                             db.Game.findByIdAndUpdate(_id,
                             { $push:{ players: {id: playerID, name: playerName}}, closed: true }, 
                             { new: true })

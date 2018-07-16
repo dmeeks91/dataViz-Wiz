@@ -53,6 +53,10 @@ module.exports = {
       .catch(err => res.json(err));
   },  
 
+  getSingleRecords: (req, res) => {
+
+  },
+  
   getStats: (req, res) => {
     db.Round
       console.log("running")

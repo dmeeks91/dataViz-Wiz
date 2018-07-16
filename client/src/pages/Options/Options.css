@@ -1,9 +1,15 @@
 .bg-primary {
     background-color: #fa5553 !important;
 }
-
+.instrHeader {
+    font-size: large;
+    background-color: white;
+}
 .card {
     border: 0px;
+    max-width: 95%;
+    margin-top: 8%;
+
 }
 
 .subbtn {
@@ -18,7 +24,7 @@
 }
 
 .Collapsible {
-    width: 300px;
+    /* width: 300px; */
     margin: 10px;
 }
 

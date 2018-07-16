@@ -12,6 +12,13 @@
     text-align: center;
 }
 
+#infoCard {
+    max-width: unset;
+    margin-top: unset;
+}
+#symDesc {
+    margin-top: 5%;
+}
 button.styles_closeButton__20ID4{
     padding: inherit;
 }
