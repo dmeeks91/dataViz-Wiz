@@ -326,7 +326,7 @@ class Play extends Component {
               <h1 id="modalTitle" className="title"><img src={(this.state.matches.length >= 1) ? this.state.matches[this.state.matches.length-1].filepath : ""} alt="Symbol" /></h1>
             </div>
             <div className="card-body">  
-              <Row>
+              <Row id="btnRow">
                 {this.state.buttons}
               </Row>
             </div>

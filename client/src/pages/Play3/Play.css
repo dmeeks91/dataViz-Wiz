@@ -1,3 +1,8 @@
+#btnRow {
+    max-width: 98%;
+    margin: auto;
+}
+
 .bg-primary {
   background-color: #fa5553 !important;
 }
