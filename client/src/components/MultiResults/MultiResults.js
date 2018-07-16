@@ -19,7 +19,7 @@ const MultiResults = ({myResults, oppResults}) => {
           <td> <span className="badge badge-primary badge-pill multi">{oppResults.correct}</span></td>
         </tr>
         <tr>
-          <td>Inorrect</td>
+          <td>Incorrect</td>
           <td> <span className="badge badge-primary badge-pill multi">{myResults.incorrect}</span></td>
           <td> <span className="badge badge-primary badge-pill multi">{oppResults.incorrect}</span></td>
         </tr>
