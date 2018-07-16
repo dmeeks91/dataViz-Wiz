@@ -4,7 +4,6 @@ import { db, joinGame, startGame }from "../../utils";
 import Collapsible from 'react-collapsible';
 import Nav from "../../components/Nav";
 import { Container } from "../../components/Grid";
-import Modal from "react-responsive-modal";
 import gameTypes from "../../gameTypes.json";
 import { Button } from "react-bootstrap";
 import { toast } from 'react-toastify';
@@ -14,16 +13,11 @@ import "./Options.css";
 class Options extends Component {
 
     state = {
-      open: false,
       options: [],
       playerID: "",
       playerName:"",
       play: false,
       toastID: null
-    };
-    
-    closeModal = () => {
-      this.setState({ open: false });
     };
     
     onJoinedGame = (game) => {
@@ -67,12 +61,6 @@ class Options extends Component {
         });
       
     };
-
-    setModal = () => {
-      this.setState({
-        open: true
-      })
-    };  
 
     saveTime (gameType, option) {   
       //console.log('SavingTime');     
@@ -125,7 +113,6 @@ class Options extends Component {
     };
 
     render() {
-      const { open } = this.state;
 
       if (this.state.play) {
           return <Redirect to="/play"/>;
@@ -136,12 +123,8 @@ class Options extends Component {
           <Nav title="DataViz-Wiz"/>
           <Container>       
             <div className="card">
-              <Collapsible transitionTime={150} trigger="Time Trial" style={{margin: 100}}> <Button bsStyle="primary" style={{margin: 10}} onClick = {()=>this.setModal()}> How to play? </Button>
-                <Modal open={open} onClose={this.closeModal} center>
-                  <div>
-                    <h1> Click on the matching symbols and select the correct name. Get as many as you can before time runs out! </h1>
-                  </div>
-                </Modal>
+            <div style={{fontSize: "18px", marginBottom: "10px"}}>Match and name as many as you can before time runs out!</div>
+              <Collapsible transitionTime={150} trigger="Single Player" style={{margin: 100}}> 
                 {/* <Link to="/play"> */}
                   {this.state.options}
                 {/* </Link> */}

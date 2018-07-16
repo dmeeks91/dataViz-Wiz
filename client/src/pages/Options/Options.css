@@ -27,6 +27,7 @@
     display: block;
     background-color: #78a3d7;
     color: white;
+    padding-bottom: 5px;
 }
 
 .Collapsible__contentInner {

@@ -71,7 +71,7 @@ class Stats extends Component {
     this.state.games.forEach((game, index) => {
       return this.getGameStats(index);
     });
-    this.setState({avgRounds: this.state.rounds.length / this.state.stats.length});
+    this.setState({avgRounds: (this.state.rounds.length / this.state.stats.length).toFixed(2)});
   }
 
   getMostMissed = () => {
@@ -150,65 +150,48 @@ class Stats extends Component {
     return (
     <div>
       <Nav title="DataViz-Wiz"/>
-      <Container>       
-        <Jumbotron
-        style={{
-          color: "#adc25d"
-        }}
-        >
-        {/* <div className="row">
-          <div className="col-sm-11">
-          <h1 style={{textAlign:"center", marginTop: 0}}>Stats</h1>
-          </div>
-          </div> */}
-
+      <Container style={{marginTop: "0px"}}>       
+        <Jumbotron style={{color: "#adc25d", marginBottom: "0px"}}>
           <div className="row">
             <div className="col-sm-2">
-          <img alt="userImage" style={{width: 200, marginTop: 18}} src={this.state.imageUrl}/>
+              <img alt="userImage" style={{width: 200, marginTop: 10}} src={this.state.imageUrl}/>
             </div>
             <div className="col-sm-8">
-              <p style={{fontSize: 40, marginTop:40, fontWeight: 700, textDecoration: "underline"}}> {this.state.name} </p>
-              {/* <p style={{fontSize: 30, marginTop:40}}> and maybe something else about them </p> */}
-              </div>
+              <p style={{fontSize: 30, marginTop:10, fontWeight: 700, textDecoration: "underline"}}> {this.state.name} </p>
+            </div>
           </div>
-
-
-          <div className="row align-items-center" style= {{ textAlign: "center",  }}>
-
-          <div className="col-sm-6 col-8">
-          <h2 style={{marginTop: 20,}}> Total Wins: </h2>
+          {/* <div className="row align-items-center">
+            <div className="col-sm-6 col-8">
+              <p style={{marginTop: 10, fontSize: 20, fontWeight: "bold", textAlign: "right"}}> Total Wins: </p>
+            </div>
+            <div className="col-sm-6 col-4">
+              <p style={{marginTop: 10, fontSize: 20, textAlign: "left"}}> 4 </p>
+            </div>
+          </div> */}
+          <div className="row align-items-center">
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, fontWeight: "bold", textAlign: "right"}}> Total Games: </p>
+            </div>
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, textAlign: "left"}}> {this.state.totalGames} </p>
+            </div>
           </div>
-
-          <div className="col-sm-6 col-4">
-          <p style={{marginTop: 40, fontFamily: "courier new", fontSize: 28}}> 4 </p>
+          <div className="row align-items-center">
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, fontWeight: "bold", textAlign: "right"}}> Average Score: </p>
+            </div>
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, textAlign: "left"}}> {this.state.avgRounds} </p>
+            </div>
           </div>
-
+          <div className="row align-items-center">
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, fontWeight: "bold", textAlign: "right"}}> Most Missed: </p>
+            </div> 
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, textAlign: "left"}}> {this.state.mostMissed} </p>
+            </div>
           </div>
-
-          <div className="row align-items-center" style= {{ textAlign: "center",  }}>
-
-          <div className="col-sm-6 col-8">
-          <h2 style={{marginTop: 20,}}> Total Games Played: </h2>
-          </div>
-
-          <div className="col-sm-6 col-4">
-          <p style={{marginTop: 40, fontFamily: "courier new", fontSize: 28}}> 973 </p>
-          </div>
-
-          </div>
-
-          <div className="row align-items-center" style= {{ textAlign: "center",  }}>
-
-          <div className="col-sm-6 col-8">
-          <h2 style={{marginTop: 20,}}> Most missed symbol: </h2>
-          </div> 
-
-          <div className="col-sm-6 col-4">
-          <p style={{marginTop: 40, fontFamily: "courier new", fontSize: 28}}> Word Cloud </p>
-          </div>
-
-          </div>
-
 
         </Jumbotron>
       </Container>
