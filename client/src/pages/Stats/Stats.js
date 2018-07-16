@@ -14,6 +14,7 @@ class Stats extends Component {
     logIn: false,
     playerID: "",
     games: [],
+    height: 0,
     stats: [],
     rounds: [],
     mostMissed: "",
@@ -47,11 +48,24 @@ class Stats extends Component {
     db.table('userProfile')
     .toArray()
     .then(profile => {
-          this.setState({playerID: profile[0].id})
-          this.getGames();
-          this.getUserRounds();
+      if (!profile.length) 
+      {
+        this.setState({ logIn: true });
+      }
+      else
+      {
+        this.setState({playerID: profile[0].id})
+        this.getGames();
+        this.getUserRounds();
+        this.resizeContainer();
+        window.addEventListener("resize", () => this.resizeContainer());
+      }
     })
   };
+
+  componentWillUnmount() {  
+    window.removeEventListener("resize", () => this.resizeContainer());
+  }
 
   getGames = () => {
     db.table('userProfile')
@@ -150,7 +164,7 @@ class Stats extends Component {
     return (
     <div>
       <Nav title="DataViz-Wiz"/>
-      <Container style={{marginTop: "0px"}}>       
+      <Container style={{height:this.state.height}}>       
         <Jumbotron style={{color: "#adc25d", marginBottom: "0px"}}>
           <div className="row">
             <div className="col-sm-2">
@@ -197,6 +211,12 @@ class Stats extends Component {
       </Container>
     </div>
     );
+  };
+
+  resizeContainer() {    
+    this.setState({
+      height: window.innerHeight * .90
+    });
   };
 }
 
