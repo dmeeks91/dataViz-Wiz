@@ -21,22 +21,23 @@ class Stats extends Component {
     totalGames: 0,
     avgRounds: 0
   };
-
-  handleInputChange = event => {
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value
-    });
-  };
-
-  componentWillMount() {     
+    
+  componentDidMount() {     
     db.table('userProfile')
         .toArray()
         .then(profile => {
-            if (profile.length) this.setState({ 
-              imageUrl: profile[0].imageUrl, 
-              name: profile[0].name,              
-            })
+            if (profile.length) 
+            {
+              this.setState({ 
+                playerID: profile[0].id,
+                imageUrl: profile[0].imageUrl, 
+                name: profile[0].name,              
+              });
+              this.getGames();
+              this.getUserRounds();
+              this.resizeContainer();
+              window.addEventListener("resize", () => this.resizeContainer());
+            }
             else
             {
               this.setState({logIn: true});
@@ -44,28 +45,17 @@ class Stats extends Component {
         });
   };
 
-  componentDidMount() {
-    db.table('userProfile')
-    .toArray()
-    .then(profile => {
-      if (!profile.length) 
-      {
-        this.setState({ logIn: true });
-      }
-      else
-      {
-        this.setState({playerID: profile[0].id})
-        this.getGames();
-        this.getUserRounds();
-        this.resizeContainer();
-        window.addEventListener("resize", () => this.resizeContainer());
-      }
-    })
-  };
-
   componentWillUnmount() {  
     window.removeEventListener("resize", () => this.resizeContainer());
-  }
+  };
+
+  getAllGameStats = () => {
+    this.setState({stats: []});
+    this.state.games.forEach((game, index) => {
+      return this.getGameStats(index);
+    });
+    this.setState({avgRounds: (this.state.rounds.length / this.state.stats.length).toFixed(2)});
+  };
 
   getGames = () => {
     db.table('userProfile')
@@ -80,13 +70,15 @@ class Stats extends Component {
       });
   };
 
-  getAllGameStats = () => {
-    this.setState({stats: []});
-    this.state.games.forEach((game, index) => {
-      return this.getGameStats(index);
-    });
-    this.setState({avgRounds: (this.state.rounds.length / this.state.stats.length).toFixed(2)});
-  }
+  getGameStats = (index) => {
+    const gameStats = {};
+    this.state.games[index].rounds.forEach((round, rIndex) => {
+      gameStats[`round_${rIndex}`] = this.getRoundStatsByGame(this.state.games[index], rIndex);
+    });    
+    let stats = [...this.state.stats, gameStats];
+    this.setState({stats});
+    this.setState({totalGames: this.state.stats.length});
+  };
 
   getMostMissed = () => {
     const roundArr = this.state.rounds;
@@ -110,17 +102,7 @@ class Stats extends Component {
     });
 
     this.setState({mostMissed: accuracy[0][0]});
-  }
-
-  getGameStats = (index) => {
-    const gameStats = {};
-    this.state.games[index].rounds.forEach((round, rIndex) => {
-      gameStats[`round_${rIndex}`] = this.getRoundStatsByGame(this.state.games[index], rIndex);
-    });    
-    let stats = [...this.state.stats, gameStats];
-    this.setState({stats});
-    this.setState({totalGames: this.state.stats.length});
-  }
+  };
 
   getRoundStatsByGame = (game, index) => {
     const guesses = game.rounds[index].guesses;
@@ -134,15 +116,6 @@ class Stats extends Component {
     return currStats;
   };
 
-  getUserRounds = () => {
-    API.getRounds(this.state.playerID)
-    .then(({ data })=> {
-      this.setState({rounds: this.getRoundStatsByUser(data)});
-      this.getMostMissed();
-      //console.log(this.getRoundStatsByUser());
-    });
-  }
-
   getRoundStatsByUser = (rounds) => {
     return rounds.map(round => {
       const questionArr = round.guesses.map(guess => guess.correct).filter((item, i, ar) => ar.indexOf(item) === i);
@@ -154,7 +127,15 @@ class Stats extends Component {
         });
       return currStats;
     }).reduce((a, b) => {return a.concat(b)}, []);
-  }
+  };
+
+  getUserRounds = () => {
+    API.getRounds(this.state.playerID)
+    .then(({ data })=> {
+      this.setState({rounds: this.getRoundStatsByUser(data)});
+      this.getMostMissed();
+    });
+  };
 
   render() {    
     //Redirect to Login page if not logged in
