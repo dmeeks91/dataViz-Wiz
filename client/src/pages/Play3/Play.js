@@ -2,12 +2,14 @@ import React, { Component } from "react";
 import { db, board, getStats }from "../../utils";
 import {Container} from "../../components/Grid";
 import Nav from "../../components/Nav";
+import SingleResults from "../../components/SingleResults";
+import MultiResults from "../../components/MultiResults";
 import { Link } from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
 import Modal from "react-responsive-modal";
 import { toast } from 'react-toastify';
-import { Row, Button, Table } from "react-bootstrap";
+import { Row, Button} from "react-bootstrap";
 import "./Play.css";
 import API from "../../utils/API";
 
@@ -218,6 +220,7 @@ class Play extends Component {
     const myResults = this.getResults(stats, true),
       oppResults = this.getResults(stats, false);
       myResults.name = "You";
+      //console.log(oppResults);
     this.setState({
       openResults: true,
       myResults,
@@ -240,7 +243,7 @@ class Play extends Component {
                     lose: null
                   })
                   .then(() => {  
-                    console.log("getting sats");                  
+                    //console.log("getting sats");                  
                     getStats(this.state.game, this.state.playerID, this.onGetStats);
                   })
                   .catch(e => console.log(e));
@@ -321,46 +324,11 @@ class Play extends Component {
               <h1 id="modalTitle" className="title">Time's up! </h1>
             </div>
             <div className="card-body">  
-            {/* <ul className="list-group">
-              <li style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-                Correct: 
-                <span className="badge badge-primary badge-pill"> {myResults.correct} </span>
-              </li>
-              <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-                Incorrect: 
-                <span className="badge badge-primary badge-pill"> {myResults.incorrect} </span>
-              </li>
-              <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-                Total Guesses: 
-                <span className="badge badge-primary badge-pill"> {myResults.allGuesses} </span>
-              </li>
-            </ul> */}
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>{myResults.name}</th>
-                  <th>{oppResults.name}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Correct</td>
-                  <td> <span className="badge badge-primary badge-pill">{myResults.correct}</span></td>
-                  <td> <span className="badge badge-primary badge-pill">{oppResults.correct}</span></td>
-                </tr>
-                <tr>
-                  <td>Inorrect</td>
-                  <td> <span className="badge badge-primary badge-pill">{myResults.incorrect}</span></td>
-                  <td> <span className="badge badge-primary badge-pill">{oppResults.incorrect}</span></td>
-                </tr>
-                <tr>
-                  <td>Total Guesses</td>
-                  <td> <span className="badge badge-primary badge-pill">{myResults.allGuesses}</span></td>
-                  <td> <span className="badge badge-primary badge-pill">{oppResults.allGuesses}</span></td>
-                </tr>
-              </tbody>
-            </Table>
+            {(oppResults) ? 
+              ((!oppResults.name) 
+              ? <SingleResults myResults = {myResults}/> 
+              : <MultiResults myResults = {myResults} 
+              oppResults = {oppResults}/>):""}            
             </div>
               <Row>
                 <Link to="/options">
