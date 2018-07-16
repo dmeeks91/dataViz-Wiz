@@ -1,24 +1,40 @@
 import React, { Component } from "react";
-import { db, board }from "../../utils";
+import { db, board, getStats }from "../../utils";
 import {Container} from "../../components/Grid";
+import Nav from "../../components/Nav";
+import SingleResults from "../../components/SingleResults";
+import MultiResults from "../../components/MultiResults";
+import { Link } from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
-import symbolList from "../../symbols.json"
 import Modal from "react-responsive-modal";
-import { SimpleSelect } from "react-selectize";
 import { toast } from 'react-toastify';
+import { Row, Button} from "react-bootstrap";
 import "./Play.css";
+import API from "../../utils/API";
 
 class Play extends Component {
   state = {
-    symbols: {sym1:[],sym2:[]},
+    board: new board(),
+    buttons: [],
     guesses: [],
+    guessString: "",
     height: 0,
     login: false,
-    open: false,
     matches: [],
-    selectedValue: {},
-    search:{}
+    open: false,
+    openResults: false,
+    round: 1,
+    symbols: {sym1:[],sym2:[]},
+    time:0,
+    timeInterval: 0,
+    timer: {},
+    playerID: "",
+    gameID: "",
+    game:{},
+    myResults: {allGuesses: 0, correct: 0, incorrect: 0},
+    oppResults: {allGuesses: 0, correct: 0, incorrect: 0},
+    winner:"",
   };
 
   alert = (match) => {
@@ -28,7 +44,8 @@ class Play extends Component {
     {      
       this.setState({
         open: true,
-      })
+      });
+      this.getButtons();
     }
     else if (!document.getElementsByClassName("Toastify__toast Toastify__toast--error").length) 
     {      
@@ -39,51 +56,13 @@ class Play extends Component {
   checkIfMatch() {
 
     if (this.state.guesses.length !== 2) return;
-
     const [g1, g2] = this.state.guesses;
 
     this.alert(g1.symbolID === g2.symbolID);   
   };
 
-  componentDidMount() {  
-    db.table('userProfile')
-        .toArray()
-        .then(profile => {
-            //redirect to login screen if not logged in
-            if (!profile.length) 
-            {
-              this.setState({ logIn: true });
-            }
-            else
-            {
-              this.resizeContainer();
-              window.addEventListener("resize", () => this.resizeContainer());
-              const thisBoard = new board();
-              const {match, ...symbols} = thisBoard.getSymbols(this.state.matches);
-              this.setState({
-                symbols,
-                matches: [...this.state.matches, match]
-              });
-            }
-        });    
-  };
-
-  componentWillUnmount() {  
-    window.removeEventListener("resize", () => this.resizeContainer());
-  }
-
-  closeModal = () => {
-    this.setState({ open: false });
-  };
-
-  isSelected = (boardID) => {
-    return (
-      document.getElementById(boardID)
-      .classList.value.indexOf("selected") !== -1
-    );
-  }  
-
-  handleGuess = (boardID, symbolID) => {
+  clickSymbol = (boardID, symbolID) => {
+    if (this.state.time === 0) return;
     let guesses = this.state.guesses, action;    
     const selected = this.isSelected(boardID);
     if (!selected && guesses.length < 2)
@@ -103,7 +82,7 @@ class Play extends Component {
       guesses.push({boardID, symbolID}); 
       action = "add";
     }
-    else
+    else 
     { 
       guesses = guesses.filter(guess => guess.boardID !== boardID);
       action = "remove";
@@ -115,19 +94,185 @@ class Play extends Component {
     //add/remove CSS class and check if match
     document.getElementById(boardID).classList[action]("selected");    
     if (action === "add") this.checkIfMatch();
+  };
+
+  closeModal = () => {
+    this.setState({ open: false });
+  };
+
+  closeResultsModal = () => {
+    this.setState({ openResults: false });
+  };
+  
+  componentDidMount() {  
+    db.table('userProfile')
+        .toArray()
+        .then(profile => {
+            //redirect to login screen if not logged in
+            if (!profile.length) 
+            {
+              this.setState({ logIn: true });
+            }
+            else
+            {
+              this.setState({
+                playerID: profile[0].id,
+                time: profile[0].timeInterval,
+                timeInterval: profile[0].timeInterval,
+                gameID: profile[0].game._id,
+                game: profile[0].game
+              })
+              this.resizeContainer();
+              window.addEventListener("resize", () => this.resizeContainer());
+              this.startNewGame();
+            }
+        });  
+  };
+
+  componentWillUnmount() {  
+    window.removeEventListener("resize", () => this.resizeContainer());
   }
 
-  handleName = ( {id} ) => {
-    let guess = this.state.guesses[0];
-    console.log((guess === id) ? "Name matches guess" : "Toastr: Try again")
-    this.closeModal();
-  }
+  getAnswerArray = () => {
+    const { matches } = this.state, {sym1, sym2} = this.state.symbols;
+    if (!matches.length) return [];
+    const match = matches[matches.length-1];
+    const others = [...sym1, ...sym2].filter(symbol => symbol.id !== match.id);
+
+    return this.state.board.getAnswers(match, others);
+  };
+
+  getButtons = () => {
+    const buttons = this.getAnswerArray().map(symbol =>{
+      return (
+        <Button className="col-sm-2" 
+          bsStyle="primary" key={symbol.id}
+          block
+          onClick={()=>this.guessName(symbol)}
+        >{symbol.name}</Button>
+      )
+    });
+
+    this.setState({buttons});
+  };
+
+  getIDBTable = (store) => {
+    return new Promise((resolve, reject) => {
+      db.table(store)
+        .toArray()
+        .then((data) => resolve(data[0]))
+        .catch((err) => reject(err));
+    });
+  };
   
+  getResults = (stats, me) => {
+    const { game, playerID} = this.state;
+    const pID = (me) ? playerID : 
+          game.players
+            .filter(({id}) => id !== playerID)
+            .map(({id})=>id)[0];
+    //console.log(pID);
+    const results = stats[pID];
+    return (results) ? results[results.length -1] : {allGuesses: 0, correct: 0, incorrect: 0};
+  };
+
+  getWinner = (me, opp) => {
+    if(!opp.name) return "Time's Up!"
+    const winMe = "You Win!", winOpp = `${opp.name} Wins!`;
+    if (me.correct > opp.correct) return winMe;
+    if (opp.correct > me.correct) return winOpp;
+    if (me.correct === opp.correct)
+    {
+      if(me.incorrect < opp.incorrect) return winMe;
+      if (opp.correct < me.incorrect) return winOpp;
+      return "It's a Tie!";
+    }
+  };
+
+  guessName = ({id, name}) => {    
+    const { round, matches, gameID, playerID } = this.state;
+    const match = matches[matches.length-1];
+
+    this.getIDBTable("game")
+        .then((game) => {
+          //Initialize round array if it doesn't already exist
+          if (game.rounds.length !== round) {
+            game.rounds.push({
+              gameID,
+              playerID,
+              guesses: []
+            });
+          }
+
+          //Create New guess
+          const newGuess =  {correct: match.name, guess: name, isMatch: (match.name === name)};
+
+          //Push new guess to array
+          game.rounds[round - 1].guesses.push(newGuess);
+
+          //Update current game object in indexedDB
+          db.table("game").update(1, {rounds: game.rounds});
+        });
+
+    if (match.id === id)
+    {
+      this.closeModal();
+      this.state.guesses
+          .forEach(({ boardID, symbolID }) => this.clickSymbol(boardID, symbolID));
+      this.setBoard();
+    }
+  };  
+
+  isSelected = (boardID) => {
+    return (
+      document.getElementById(boardID)
+      .classList.value.indexOf("selected") !== -1
+    );
+  };  
+  
+  onGetStats = (stats) => {
+    const myResults = this.getResults(stats, true),
+      oppResults = this.getResults(stats, false),
+      winner = this.getWinner(myResults, oppResults);
+      myResults.name = "You";
+
+    this.setState({
+      myResults,
+      openResults: true,
+      oppResults,
+      winner
+    });    
+  }
+
+  pushRoundToMongo = () => {
+    //push most recent round to mongoDB
+    this.getIDBTable("game")
+        .then(({rounds})=>{          
+          rounds.forEach((round, index) => {
+            //if (!round) return; //exit if no guesses made 
+            round.index = index;
+            API.saveRound(round)
+              .then(() => {
+                API.updateGame({
+                    id: round.gameID,
+                    win: round.playerID,
+                    lose: null
+                  })
+                  .then(() => {                    
+                    getStats(this.state.game, this.state.playerID, this.onGetStats);
+                  })
+                  .catch(e => console.log(e));
+              })
+              .catch(e => console.log(e));
+            });          
+        });
+  };
+
   resizeContainer() {    
     this.setState({
       height: window.innerHeight * .90
     });
-  }
+  };
 
   render() {
     //Redirect to Login page if not logged in
@@ -135,18 +280,20 @@ class Play extends Component {
         return <Redirect to="/"/>;
     }
     
-    //Define Variables to be passed as props
-    const options = symbolList.map(function(symbol){
-        return {label: symbol.name, value: symbol.id}
-    });
-
-    //Define Variables to be passed as props
-    const { open, symbols } = this.state;  
-
+    // //Define Variables to be passed as props    
+    const { open, openResults, myResults, oppResults, winner } = this.state,  
+          {sym1, sym2} = this.state.symbols;
+    
     //JSX of components to be returned by the render function
-    return (  
+    return ( 
+    <div className="container-div">
+      <Nav 
+          title="DataViz-Wiz"
+          page="play"
+          time= {this.state.time}//{ (this.state.timer === 0) ? `Time's Up!`: this.state.timer }
+      />
       <Container style={{height:this.state.height}}>
-        {symbols.sym1.map(symbol =>{ 
+        {sym1.map(symbol =>{ 
           const boardID = `sym1_${symbol.id}`;
           return (
             <Symbol
@@ -154,12 +301,12 @@ class Play extends Component {
                 id = {boardID}  
                 name={symbol.name}
                 url={symbol.filepath}
-                type="playImg"
-                onClick = { () => this.handleGuess(boardID, symbol.id) }
+                type="playImg slideDown"
+                onClick = { () => this.clickSymbol(boardID, symbol.id) }
             />
           )}
         )}
-        {symbols.sym2.map(symbol => { 
+        {sym2.map(symbol => { 
           const boardID = `sym2_${symbol.id}`;
           return (
             <Symbol
@@ -167,24 +314,127 @@ class Play extends Component {
                 id = {boardID}  
                 name={symbol.name}
                 url={symbol.filepath}
-                type="playImg"
-                onClick = { () => this.handleGuess(boardID, symbol.id) }
+                type="playImg slideDown"
+                onClick = { () => this.clickSymbol(boardID, symbol.id) }
             />
           )}
         )}
-        <Modal open={open} onClose={this.closeModal} center>
-          <div className="card">
+        <Modal open={open} center showCloseIcon={false}
+          onClose={this.closeModal} closeOnOverlayClick={false} >
+          <div className="card modalCard">
             <div className="card-header">
-              <h1 className="title">Select Viz Name</h1>
+              <h1 id="modalTitle" className="title"><img src={(this.state.matches.length >= 1) ? this.state.matches[this.state.matches.length-1].filepath : ""} alt="Symbol" /></h1>
             </div>
-            <div className="card-body">             
-              <SimpleSelect options = {options}></SimpleSelect>                   
+            <div className="card-body">  
+              <Row id="btnRow">
+                {this.state.buttons}
+              </Row>
             </div>
           </div>
         </Modal>
+        <Modal style= {{ width: 400 }} open={openResults} center showCloseIcon={false}
+          onClose={this.closeResultsModal} closeOnOverlayClick={false}>
+          <div className="card modalCard">
+            <div className="card-header">
+              <h1 id="modalTitle" className="title">
+                {winner} 
+              </h1>
+            </div>
+            <div className="card-body">  
+            {(oppResults) ? 
+              ((!oppResults.name) 
+              ? <SingleResults myResults = {myResults}/> 
+              : <MultiResults myResults = {myResults} 
+              oppResults = {oppResults}/>):""}            
+            </div>
+              <Row>
+                <Link to="/options">
+                  <Button bsStyle="primary" style={{margin: "5px"}}> Play again </Button>
+                </Link>
+                <Link to="/stats">
+                  <Button bsStyle="primary" style={{margin: "5px"}}> More Stats </Button>
+                </Link>
+              </Row>
+          </div>
+        </Modal>
+
+
+
       </Container>
+      </div>
     );
-  }
+  };
+
+  run = () => {
+    // Time functions: run defines the tick-rate of once per second, stop clears the interval,
+    // and decrement counts down to zero and updates the state for the timer in the navbar  
+    this.setState({timer: setInterval(this.setTimer, 1000)});
+  }; 
+
+  setBoard() {    
+    const {match, ...symbols} = this.state.board.getSymbols(this.state.matches);
+    this.setState({
+      symbols,
+      guesses: [],
+      matches: [...this.state.matches, match]
+    });
+  };
+
+  setTimer = () => {
+    let newTime = this.state.time - 1;
+    (newTime === -1) ? this.stop() :
+    this.setState({
+      time: newTime
+    })
+  };
+
+  startNewGame() { 
+    db.table('game').clear();
+    //Add game in indexedDB
+    db.table('game')
+      .add({id:1, rounds:[]})
+      .then(()=>{
+        this.setBoard();          
+        this.run();
+      });
+  };
+
+  startRound() {
+    //new round
+    const newRound = this.state.round + 1;
+    this.setState({ 
+      round: newRound,
+      time: this.state.timeInterval //option from state
+     });
+
+    //alert new round
+    toast.success(`Starting Round #${newRound}`);
+
+    //new board
+    this.setBoard();
+
+    //start timer
+    this.run();
+  };
+
+  stop = () => {
+    toast.success(`Time Up!`);
+    clearInterval(this.state.timer);
+    this.timeUp();
+  };
+
+  timeUp() {
+    if (this.state.time === 0){
+      this.setState({
+        //openResults: true,
+        open: false
+      });
+    }
+    
+    this.pushRoundToMongo();
+    
+    //If round index < 5 start new Round else end game
+  };
 }
 
 export default Play;
