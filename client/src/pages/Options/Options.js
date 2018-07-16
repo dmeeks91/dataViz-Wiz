@@ -3,16 +3,19 @@ import {Redirect} from "react-router-dom";
 import { db, joinGame, startGame }from "../../utils";
 import Collapsible from 'react-collapsible';
 import Nav from "../../components/Nav";
+import GameOptions from "../../components/GameOptions";
 import { Container } from "../../components/Grid";
 import gameTypes from "../../gameTypes.json";
 import { Button } from "react-bootstrap";
 import { toast } from 'react-toastify';
+import API from "../../utils/API";
 import "./Options.css";
 
 
 class Options extends Component {
 
     state = {
+      games: [],
       options: [],
       playerID: "",
       playerName:"",
@@ -62,8 +65,7 @@ class Options extends Component {
       
     };
 
-    saveTime (gameType, option) {   
-      //console.log('SavingTime');     
+    saveTime (gameType, option) {      
       db.table('userProfile')
         .update(this.state.playerID,{timeInterval: option});
       joinGame({
@@ -88,28 +90,53 @@ class Options extends Component {
             this.setState({
               playerID: profile[0].id,
               playerName: profile[0].firstName
-            })
-            this.getGameTypes();
+            });
+            this.getGamesPlayed();
           }
         });  
 
     };
 
+    getGamesPlayed() {
+      API.getGames(this.state.playerID)
+        .then(({data})=> {
+          const games = data.filter(({type}) => type === 0); 
+          this.setState({games});
+          this.getGameTypes();
+        });
+    };
+
     getGameTypes() {
-      // console.log(gameTypes[0].options)
-      const gameOptions = gameTypes[0].options
+      const gameOptions = gameTypes[0].options           
       const options = Object.keys(gameOptions).map((key, index) =>{
+        //console.log(gameOptions[index]);
+        const optRecord = this.getMostMatches(gameOptions[index]);
         return (
-          <Button className="col-sm-2 subbtn" 
-            key={gameOptions[key]}
-            style={{textDecorationLine: "none"}}
-            block
-            onClick={() => this.saveTime(gameTypes[0].id,gameOptions[index])}
-          >{`${gameOptions[index]} seconds`}</Button>
+          { 
+            key: gameOptions[key],
+            click: () => this.saveTime(gameTypes[0].id,gameOptions[index]),
+            style: {textDecorationLine: "none"},
+            text: `${gameOptions[index]} seconds`,
+            best: optRecord
+          }
         )
       });
   
       this.setState({options});
+    };
+
+    getMostMatches(opt) {
+      const matches = this.state.games.map(game => {
+        return game.rounds[0].guesses.filter(({isMatch})=>{
+          return (isMatch && game.option === opt)
+        }).length;
+      });
+
+      //console.log(matches);
+
+      // console.log(Math.max(...matches));
+
+      return Math.max(...matches)
     };
 
     render() {
@@ -126,7 +153,7 @@ class Options extends Component {
               <div className="card-header instrHeader">Match and name as many as you can before time runs out!</div>            
               <div className="card-body">
                 <Collapsible transitionTime={150} trigger="Single Player" style={{margin: 100}}> 
-                    {this.state.options}
+                    <GameOptions options={this.state.options}/>
                 </Collapsible>
                 <Collapsible transitionTime={150} trigger="Versus" style={{margin: 100}}>
                   <Button
