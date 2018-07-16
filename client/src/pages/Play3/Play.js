@@ -2,12 +2,14 @@ import React, { Component } from "react";
 import { db, board, getStats }from "../../utils";
 import {Container} from "../../components/Grid";
 import Nav from "../../components/Nav";
+import SingleResults from "../../components/SingleResults";
+import MultiResults from "../../components/MultiResults";
 import { Link } from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
 import Modal from "react-responsive-modal";
 import { toast } from 'react-toastify';
-import { Row, Button } from "react-bootstrap";
+import { Row, Button} from "react-bootstrap";
 import "./Play.css";
 import API from "../../utils/API";
 
@@ -174,7 +176,7 @@ class Play extends Component {
           game.players
             .filter(({id}) => id !== playerID)
             .map(({id})=>id)[0];
-    console.log(pID);
+    //console.log(pID);
     const results = stats[pID];
     return (results) ? results[results.length -1] : {allGuesses: 0, correct: 0, incorrect: 0};
   }
@@ -214,11 +216,15 @@ class Play extends Component {
   };
   
   onGetStats = (stats) => {
-    console.log(stats);
+    //console.log(stats);
+    const myResults = this.getResults(stats, true),
+      oppResults = this.getResults(stats, false);
+      myResults.name = "You";
+      //console.log(oppResults);
     this.setState({
       openResults: true,
-      myResults: this.getResults(stats, true),
-      oppResults: this.getResults(stats, false),
+      myResults,
+      oppResults
     });    
   }
 
@@ -237,7 +243,7 @@ class Play extends Component {
                     lose: null
                   })
                   .then(() => {  
-                    console.log("getting sats");                  
+                    //console.log("getting sats");                  
                     getStats(this.state.game, this.state.playerID, this.onGetStats);
                   })
                   .catch(e => console.log(e));
@@ -262,8 +268,6 @@ class Play extends Component {
     // //Define Variables to be passed as props    
     const { open, openResults, myResults, oppResults } = this.state,  
           {sym1, sym2} = this.state.symbols;
-          // myResults = this.getResults(true),
-          // oppResults = this.getResults(false);
     
     //JSX of components to be returned by the render function
     return ( 
@@ -314,26 +318,17 @@ class Play extends Component {
           </div>
         </Modal>
         <Modal style= {{ width: 400 }} open={openResults} center showCloseIcon={false}
-          onClose={this.closeResultsModal} >
+          onClose={this.closeResultsModal} closeOnOverlayClick={false}>
           <div className="card">
             <div className="card-header">
               <h1 id="modalTitle" className="title">Time's up! </h1>
             </div>
             <div className="card-body">  
-            <ul className="list-group">
-              <li style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-                Correct: 
-                <span className="badge badge-primary badge-pill"> {myResults.correct} </span>
-              </li>
-              <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-                Incorrect: 
-                <span className="badge badge-primary badge-pill"> {myResults.incorrect} </span>
-              </li>
-              <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
-                Total Guesses: 
-                <span className="badge badge-primary badge-pill"> {myResults.allGuesses} </span>
-              </li>
-            </ul>
+            {(oppResults) ? 
+              ((!oppResults.name) 
+              ? <SingleResults myResults = {myResults}/> 
+              : <MultiResults myResults = {myResults} 
+              oppResults = {oppResults}/>):""}            
             </div>
               <Row>
                 <Link to="/options">

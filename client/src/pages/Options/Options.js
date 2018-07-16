@@ -21,7 +21,7 @@ class Options extends Component {
     };
     
     onJoinedGame = (game) => {
-      console.log(game);
+      // console.log(game);
       if (game.players.length === 1 && game.type === 1)
       {
         toast.info(`Game Created, waiting for another person to join`,{
@@ -48,15 +48,15 @@ class Options extends Component {
           else
           {
             toast.dismiss();
-            const other = game.players.map(player=>player.name)
-                          .filter(player => player.name !== this.state.playerName)[0];
+            const other = game.players.filter(({id}) => id !== this.state.playerID)
+                              .map(player=>player.name)[0];
             toast.success(`Your game against ${other} begins now!`,{
               autoClose: false
             });
             setTimeout(() => {
               toast.dismiss();
               this.setState({play:true})
-            })
+            },2000);
           }
         });
       
