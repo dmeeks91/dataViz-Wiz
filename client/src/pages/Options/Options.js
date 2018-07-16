@@ -62,7 +62,7 @@ class Options extends Component {
             setTimeout(() => {
               toast.dismiss();
               this.setState({play:true})
-            })
+            },2000);
           }
         });
       
