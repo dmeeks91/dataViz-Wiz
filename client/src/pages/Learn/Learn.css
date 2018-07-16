@@ -25,6 +25,10 @@ button.styles_closeButton__20ID4{
     max-width: unset;
 }
 
+.styles_modal__gNwvD {
+    padding: 0px;
+}
+
 @media only screen and (max-width:450px){
     .learnImg {max-width: 90px;}
     .col-xs-3 {width: 25%;}

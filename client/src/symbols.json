@@ -53,7 +53,7 @@
         "id": "08",
         "filepath": "./symbols/symbol08.png",
         "name": "Waterfall",
-        "description": "A waterfall chart helps in understanding the cumulative effect of sequentially introduced positive or negative values. The waterfall chart is also known as a flying bricks chart or Mario chart due to the apparent suspension of columns (bricks) in mid-air. Normally used for understanding how an initial value is affected by a series of intermediate positive or negative values.",
+        "description": "A waterfall chart helps in understanding the cumulative effect of sequentially introduced positive or negative values. Normally used for understanding how an initial value is affected by a series of intermediate positive or negative values.",
         "infoLink": "http://datavizproject.com/data-type/waterfall-chart/"
     },
     {
@@ -109,14 +109,14 @@
         "id": "16",
         "filepath": "./symbols/symbol16.png",
         "name": "Donut",
-        "description": "A donut chart (also spelled doughnut) is functionally identical to a pie chart, with the exception of a blank center and the ability to support multiple statistics at once. Doughnut charts provide a better data intensity ratio to standard pie charts since the blank center can be used to display additional, related data.",
+        "description": "A donut chart is functionally identical to a pie chart, with the exception of a blank center and the ability to support multiple statistics at once.",
         "infoLink": "http://datavizproject.com/data-type/donut-chart/"
     },
     {
         "id": "17",
         "filepath": "./symbols/symbol17.png",
         "name": "Sankey",
-        "description": "Sankey Diagrams display flows and their quantities in proportion to one another. The width of the arrows or lines are used to show their magnitudes, so the bigger the arrow, the larger the quantity of flow. Flow arrows or lines can combine together or split through their paths on each stage of a process. Colour can be used to divide the diagram into different categories or to show the transition from one state of the process to another.",
+        "description": "Sankey Diagrams display flows and their quantities in proportion to one another. The width of the arrows or lines are used to show their magnitudes, so the bigger the arrow, the larger the quantity of flow. Flow arrows or lines can combine together or split through their paths on each stage of a process.",
         "infoLink": "https://datavizcatalogue.com/methods/sankey_diagram.html"
     },
     {
@@ -165,7 +165,7 @@
         "id": "24",
         "filepath": "./symbols/symbol24.png",
         "name": "Boxplot",
-        "description": "A Box and Whisker Plot (or Box Plot) is a convenient way of visually displaying the data distribution through their quartiles. The lines extending parallel from the boxes are known as the “whiskers”, which are used to indicate variability outside the upper and lower quartiles. Outliers are sometimes plotted as individual dots that are in-line with whiskers. Box Plots can be drawn either vertically or horizontally.",
+        "description": "A Box Plot is a convenient way of visually displaying the data distribution through their quartiles. The lines extending parallel from the boxes are known as the “whiskers”, which are used to indicate variability outside the upper and lower quartiles. Outliers can be plotted as individual dots that are in-line with whiskers.",
         "infoLink": "https://datavizcatalogue.com/methods/box_plot.html"
     },
     {
@@ -179,7 +179,7 @@
         "id": "26",
         "filepath": "./symbols/symbol26.png",
         "name": "Word Cloud",
-        "description": "A tag cloud is a visual representation for text data, typically used to depict keyword metadata (tags) on websites, to visualize free form text or to analyses speeches( e.g. election’s campaign). Tags are usually single words, and the importance of each tag is shown with font size or color. This format is useful for quickly perceiving the most prominent terms and for locating a term alphabetically to determine its relative prominence.",
+        "description": "A tag cloud is a visual representation for text data, typically used to depict keyword metadata (tags) on websites, to visualize free form text or to analyses speeches. Tags are usually single words, and the importance of each tag is shown with font size or color.",
         "infoLink": "http://datavizproject.com/data-type/tag-cloud/"
     },
     {
