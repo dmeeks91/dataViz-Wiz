@@ -11,7 +11,7 @@ const SingleResults = ({myResults}) => {
           <td> <span className="badge badge-primary badge-pill multi">{myResults.correct}</span></td>
         </tr>
         <tr>
-          <td>Inorrect</td>
+          <td>Incorrect</td>
           <td> <span className="badge badge-primary badge-pill multi">{myResults.incorrect}</span></td>
         </tr>
         <tr>
