@@ -16,6 +16,7 @@ class Options extends Component {
 
     state = {
       games: [],
+      inGame: false,
       options: [],
       playerID: "",
       playerName:"",
@@ -27,12 +28,14 @@ class Options extends Component {
       // console.log(game);
       if (game.players.length === 1 && game.type === 1)
       {
+        toast.dismiss();
         toast.info(`Game Created, waiting for another person to join`,{
           autoClose: false
         });
       }
       else if (game.players.length === 2)
-      {        
+      {     
+        toast.dismiss();   
         toast.info(`We found a game for you to play!`,{
           autoClose: false
         });
@@ -68,12 +71,18 @@ class Options extends Component {
     saveTime (gameType, option) {      
       db.table('userProfile')
         .update(this.state.playerID,{timeInterval: option});
-      joinGame({
-        option,
-        playerID: this.state.playerID,
-        playerName: this.state.playerName,
-        type: gameType
-      }, this.onJoinedGame);
+      
+      if (!this.state.inGame)
+      {        
+        joinGame({
+          option,
+          playerID: this.state.playerID,
+          playerName: this.state.playerName,
+          type: gameType
+        }, this.onJoinedGame);
+        this.setState({inGame:true});
+      }
+      
     };
 
     componentDidMount() {  
