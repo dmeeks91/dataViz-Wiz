@@ -27,6 +27,7 @@ class Options extends Component {
     };
     
     onJoinedGame = (game) => {
+      console.log(game);
       if (game.players.length === 1 && game.type === 1)
       {
         toast.info(`Game Created, waiting for another person to join`,{
