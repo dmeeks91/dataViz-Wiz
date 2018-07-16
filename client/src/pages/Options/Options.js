@@ -121,22 +121,20 @@ class Options extends Component {
       return(
         <div>
           <Nav title="DataViz-Wiz"/>
-          <Container>       
+          <Container>                  
             <div className="card">
-            <div style={{fontSize: "18px", marginBottom: "10px"}}>Match and name as many as you can before time runs out!</div>
-              <Collapsible transitionTime={150} trigger="Single Player" style={{margin: 100}}> 
-                {/* <Link to="/play"> */}
-                  {this.state.options}
-                {/* </Link> */}
-              </Collapsible>
-            </div>
-            <div className="card">
-              <Collapsible transitionTime={150} trigger="Versus" style={{margin: 100}}>
-                <Button
-                 bsStyle="primary"
-                 onClick={() => this.saveTime(1,30)}
-                >Join Game</Button>
-              </Collapsible>
+              <div className="card-header instrHeader">Match and name as many as you can before time runs out!</div>            
+              <div className="card-body">
+                <Collapsible transitionTime={150} trigger="Single Player" style={{margin: 100}}> 
+                    {this.state.options}
+                </Collapsible>
+                <Collapsible transitionTime={150} trigger="Versus" style={{margin: 100}}>
+                  <Button
+                  bsStyle="primary"
+                  onClick={() => this.saveTime(1,30)}
+                  >Join Game</Button>
+                </Collapsible>
+              </div>
             </div>
           </Container>
         </div>   
