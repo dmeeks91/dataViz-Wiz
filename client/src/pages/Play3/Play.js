@@ -34,6 +34,7 @@ class Play extends Component {
     game:{},
     myResults: {allGuesses: 0, correct: 0, incorrect: 0},
     oppResults: {allGuesses: 0, correct: 0, incorrect: 0},
+    winner:"",
   };
 
   alert = (match) => {
@@ -61,6 +62,7 @@ class Play extends Component {
   };
 
   clickSymbol = (boardID, symbolID) => {
+    if (this.state.time === 0) return;
     let guesses = this.state.guesses, action;    
     const selected = this.isSelected(boardID);
     if (!selected && guesses.length < 2)
@@ -172,7 +174,20 @@ class Play extends Component {
     //console.log(pID);
     const results = stats[pID];
     return (results) ? results[results.length -1] : {allGuesses: 0, correct: 0, incorrect: 0};
-  }
+  };
+
+  getWinner = (me, opp) => {
+    if(!opp.name) return "Time's Up!"
+    const winMe = "You Win!", winOpp = `${opp.name} Wins!`;
+    if (me.correct > opp.correct) return winMe;
+    if (opp.correct > me.correct) return winOpp;
+    if (me.correct === opp.correct)
+    {
+      if(me.incorrect < opp.incorrect) return winMe;
+      if (opp.correct < me.incorrect) return winOpp;
+      return "It's a Tie!";
+    }
+  };
 
   guessName = ({id, name}) => {    
     const { round, matches, gameID, playerID } = this.state;
@@ -216,15 +231,16 @@ class Play extends Component {
   };  
   
   onGetStats = (stats) => {
-    //console.log(stats);
     const myResults = this.getResults(stats, true),
-      oppResults = this.getResults(stats, false);
+      oppResults = this.getResults(stats, false),
+      winner = this.getWinner(myResults, oppResults);
       myResults.name = "You";
-      //console.log(oppResults);
+
     this.setState({
-      openResults: true,
       myResults,
-      oppResults
+      openResults: true,
+      oppResults,
+      winner
     });    
   }
 
@@ -242,8 +258,7 @@ class Play extends Component {
                     win: round.playerID,
                     lose: null
                   })
-                  .then(() => {  
-                    //console.log("getting sats");                  
+                  .then(() => {                    
                     getStats(this.state.game, this.state.playerID, this.onGetStats);
                   })
                   .catch(e => console.log(e));
@@ -266,7 +281,7 @@ class Play extends Component {
     }
     
     // //Define Variables to be passed as props    
-    const { open, openResults, myResults, oppResults } = this.state,  
+    const { open, openResults, myResults, oppResults, winner } = this.state,  
           {sym1, sym2} = this.state.symbols;
     
     //JSX of components to be returned by the render function
@@ -306,7 +321,7 @@ class Play extends Component {
         )}
         <Modal open={open} center showCloseIcon={false}
           onClose={this.closeModal} closeOnOverlayClick={false} >
-          <div className="card">
+          <div className="card modalCard">
             <div className="card-header">
               <h1 id="modalTitle" className="title"><img src={(this.state.matches.length >= 1) ? this.state.matches[this.state.matches.length-1].filepath : ""} alt="Symbol" /></h1>
             </div>
@@ -319,9 +334,11 @@ class Play extends Component {
         </Modal>
         <Modal style= {{ width: 400 }} open={openResults} center showCloseIcon={false}
           onClose={this.closeResultsModal} closeOnOverlayClick={false}>
-          <div className="card">
+          <div className="card modalCard">
             <div className="card-header">
-              <h1 id="modalTitle" className="title">Time's up! </h1>
+              <h1 id="modalTitle" className="title">
+                {winner} 
+              </h1>
             </div>
             <div className="card-body">  
             {(oppResults) ? 

@@ -9,7 +9,7 @@ class Dashboard extends Component {
     logOut: false,
     logIn: false,
     container: {height:0},
-    dashBtn: {"margin-top":0}
+    dashBtn: {marginTop:0}
   };
 
   componentDidMount() {  
@@ -38,7 +38,7 @@ class Dashboard extends Component {
   resizeContainer() {    
     this.setState({
       container: {height:window.innerHeight * .90},
-      dashBtn: {"margin-top": ((window.innerHeight *.88)/ 2)*.45}
+      dashBtn: {marginTop: ((window.innerHeight *.88)/ 2)*.45}
     });
   };
 

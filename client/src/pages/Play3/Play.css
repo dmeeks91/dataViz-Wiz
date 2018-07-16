@@ -22,6 +22,24 @@
   max-width: unset;
 }
 
+.modalCard {
+    border: 0px;
+    max-width: 95%;
+    /* margin-top: 8%; */
+    margin: auto;
+    padding: 4%;
+}
+
+.modalCard .card-body {
+    text-align: center;
+    padding-left: unset;
+    padding-right: unset;
+}
+
+.table {
+	margin-bottom: unset;
+}
+
 @media only screen and (max-width:450px){
     .playImg {max-width: 100px;}
     .col-xs-4 {width: 33%;}
