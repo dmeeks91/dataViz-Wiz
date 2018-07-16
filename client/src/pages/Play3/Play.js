@@ -30,7 +30,8 @@ class Play extends Component {
     playerID: "",
     gameID: "",
     game:{},
-    roundSummary: [],
+    myResults: {allGuesses: 0, correct: 0, incorrect: 0},
+    oppResults: {allGuesses: 0, correct: 0, incorrect: 0},
   };
 
   alert = (match) => {
@@ -167,6 +168,17 @@ class Play extends Component {
     });
   };
   
+  getResults = (stats, me) => {
+    const { game, playerID} = this.state;
+    const pID = (me) ? playerID : 
+          game.players
+            .filter(({id}) => id !== playerID)
+            .map(({id})=>id)[0];
+    console.log(pID);
+    const results = stats[pID];
+    return (results) ? results[results.length -1] : {allGuesses: 0, correct: 0, incorrect: 0};
+  }
+
   guessName = ({id, name}) => {    
     const { round, matches, gameID, playerID } = this.state;
     const match = matches[matches.length-1];
@@ -202,9 +214,12 @@ class Play extends Component {
   };
   
   onGetStats = (stats) => {
-    console.log(stats)
-    this.setState({roundSummary:stats});
-    // console.log(this.state.roundSummary[this.state.playerID].allGuesses)
+    console.log(stats);
+    this.setState({
+      openResults: true,
+      myResults: this.getResults(stats, true),
+      oppResults: this.getResults(stats, false),
+    });    
   }
 
   pushRoundToMongo = () => {
@@ -221,7 +236,8 @@ class Play extends Component {
                     win: round.playerID,
                     lose: null
                   })
-                  .then(() => {                    
+                  .then(() => {  
+                    console.log("getting sats");                  
                     getStats(this.state.game, this.state.playerID, this.onGetStats);
                   })
                   .catch(e => console.log(e));
@@ -234,7 +250,6 @@ class Play extends Component {
   resizeContainer() {    
     this.setState({
       height: window.innerHeight * .90
-      
     });
   };
 
@@ -245,10 +260,10 @@ class Play extends Component {
     }
     
     // //Define Variables to be passed as props    
-    const { open, openResults, roundSummary, playerID } = this.state,  
-          {sym1, sym2} = this.state.symbols,
-          myResults = (roundSummary[playerID]) ? roundSummary[playerID] : {allGuesses: 0, correct: 0};
-
+    const { open, openResults, myResults, oppResults } = this.state,  
+          {sym1, sym2} = this.state.symbols;
+          // myResults = this.getResults(true),
+          // oppResults = this.getResults(false);
     
     //JSX of components to be returned by the render function
     return ( 
@@ -309,6 +324,10 @@ class Play extends Component {
               <li style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
                 Correct: 
                 <span className="badge badge-primary badge-pill"> {myResults.correct} </span>
+              </li>
+              <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
+                Incorrect: 
+                <span className="badge badge-primary badge-pill"> {myResults.incorrect} </span>
               </li>
               <li  style= {{ fontSize: 20 }} className="list-group-item d-flex justify-content-between align-items-center">
                 Total Guesses: 
@@ -378,7 +397,7 @@ class Play extends Component {
 
   startRound() {
     //push round to mongo
-    this.pushRoundToMongo();
+    //this.pushRoundToMongo();
 
     //new round
     const newRound = this.state.round + 1;
@@ -400,7 +419,7 @@ class Play extends Component {
   timeUp() {
     if (this.state.time === 0){
       this.setState({
-        openResults: true,
+        //openResults: true,
         open: false
       });
     }
