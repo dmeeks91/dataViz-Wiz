@@ -202,6 +202,7 @@ class Play extends Component {
   };
   
   onGetStats = (stats) => {
+    console.log(stats)
     this.setState({roundSummary:stats});
     // console.log(this.state.roundSummary[this.state.playerID].allGuesses)
   }
@@ -220,9 +221,8 @@ class Play extends Component {
                     win: round.playerID,
                     lose: null
                   })
-                  .then(() => {
-                    getStats({ _id: this.state.gameID, type: 0, 
-                      playerID: this.state.playerID}, this.onGetStats);
+                  .then(() => {                    
+                    getStats(this.state.game, this.state.playerID, this.onGetStats);
                   })
                   .catch(e => console.log(e));
               })

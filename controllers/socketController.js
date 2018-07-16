@@ -48,20 +48,13 @@ const io = {
 
             }
         });
-        client.on('getStats', (game) => {
-            if (game.type === 0)
-            {
-                io.getGameStats(game._id)
-                  .then(data => {
-                      const stats = {};
-                      stats[game.playerID] = data[0];
-                      client.emit('stats', stats);
-                  });
-            }
-            else
-            {
-
-            }
+        client.on('getStats', ({game, playerID}) => {
+            if (game.players[0].id != playerID) return;
+            const { players, type, _id } = game;
+            io.getGameStats(_id, players)
+                .then(stats => {
+                server.in(game._id).emit('stats', stats);
+                });
         });
     },
     findOpenGame: ({ option, playerID, playerName, type }) => {
@@ -99,24 +92,38 @@ const io = {
                 });
         });
     },
-    getGameStats: (_id) => {
+    getGameStats: (_id, players) => {
         return new Promise((resolve, reject) => {
             db.Game.find({_id})
             .populate('rounds')
-            .then(game => {  
-                resolve(game[0].rounds.map((round, rIndex) => {
-                    return io.getRoundStats(game[0], rIndex);
-                })
-                );            
+            .then(game => {
+                const stats = {};
+                players.forEach(player => {
+                    stats[player.id] = io.getStatsByPlayer(game[0], player.id);
+                });  
+                resolve(stats);   
             });
         });
     },
-    getRoundStats: (game, index) => {
-        const guesses = game.rounds[index].guesses;
+    getStatsByPlayer: (game, playerID)=>{
+        return game.rounds
+            .filter(round => round.playerID === playerID)
+            .map((round, rIndex) => {
+                return io.getRoundStats(round, io.getPlayerName(game, playerID));
+            });
+    },
+    getRoundStats: (round, name) => {
+        // console.log("round");
+        // console.log(round);
+        const guesses = round.guesses;
         const correct = guesses.filter(guess => guess.isMatch).length;
+        const incorrect = guesses.filter(guess => !guess.isMatch).length;
         const allGuesses = guesses.length;
-
-        return {correct, allGuesses};
+        return {correct, incorrect, allGuesses, name};
+    },
+    getPlayerName: (game, playerID) => {
+        return game.players.filter(player=>player.id === playerID)
+                   .map(player => player.name)[0];
     }
 }
 
