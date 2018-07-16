@@ -53,7 +53,14 @@ const io = {
             const { players, type, _id } = game;
             io.getGameStats(_id, players)
                 .then(stats => {
-                server.in(game._id).emit('stats', stats);
+                    if (type) 
+                    {
+                        server.in(game._id).emit('stats', stats);
+                    }
+                    else 
+                    {
+                        client.emit('stats', stats);
+                    }
                 });
         });
     },
