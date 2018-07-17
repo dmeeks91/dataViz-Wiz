@@ -22,6 +22,8 @@ class Play extends Component {
     height: 0,
     login: false,
     matches: [],
+    myResults: {allGuesses: 0, correct: 0, incorrect: 0},
+    oppResults: {allGuesses: 0, correct: 0, incorrect: 0},
     open: false,
     openResults: false,
     round: 1,
@@ -32,8 +34,6 @@ class Play extends Component {
     playerID: "",
     gameID: "",
     game:{},
-    myResults: {allGuesses: 0, correct: 0, incorrect: 0},
-    oppResults: {allGuesses: 0, correct: 0, incorrect: 0},
     winner:"",
   };
 
@@ -49,6 +49,7 @@ class Play extends Component {
     }
     else if (!document.getElementsByClassName("Toastify__toast Toastify__toast--error").length) 
     {      
+      //only creat new toastify error if one is not already displayed
       toast.error(`This is not a Match. Try Again!`);
     }
   };
@@ -115,6 +116,7 @@ class Play extends Component {
             }
             else
             {
+              //assign state variables
               this.setState({
                 playerID: profile[0].id,
                 time: profile[0].timeInterval,
@@ -171,22 +173,38 @@ class Play extends Component {
           game.players
             .filter(({id}) => id !== playerID)
             .map(({id})=>id)[0];
-    //console.log(pID);
+            
     const results = stats[pID];
+    //add ID to results which makes updating Mongo easier when the winner is determined
+    if (results) results[results.length -1].id = pID; 
     return (results) ? results[results.length -1] : {allGuesses: 0, correct: 0, incorrect: 0};
   };
 
   getWinner = (me, opp) => {
-    if(!opp.name) return "Time's Up!"
-    const winMe = "You Win!", winOpp = `${opp.name} Wins!`;
-    if (me.correct > opp.correct) return winMe;
-    if (opp.correct > me.correct) return winOpp;
-    if (me.correct === opp.correct)
+    const gameID = this.state.game._id;
+    let msg = "Time's Up!";
+    if(!opp.name) 
     {
-      if(me.incorrect < opp.incorrect) return winMe;
-      if (opp.correct < me.incorrect) return winOpp;
-      return "It's a Tie!";
+      this.saveWinner(gameID, me.id, null);
     }
+    else if (me.correct > opp.correct || 
+      (me.correct === opp.correct && me.incorrect < opp.incorrect))
+    {
+      msg = "You Win!";
+      this.saveWinner(gameID, me.id, opp.id);
+    }
+    else if (opp.correct > me.correct || 
+      (me.correct === opp.correct && opp.incorrect < me.incorrect)) 
+    {
+      msg = `${opp.name} Wins!`;
+    }
+    else if (me.correct === opp.correct)
+    {
+      msg = "It's a Tie!";
+      this.saveWinner(gameID, null, null);
+    }
+
+    return msg;
   };
 
   guessName = ({id, name}) => {    
@@ -253,15 +271,15 @@ class Play extends Component {
             round.index = index;
             API.saveRound(round)
               .then(() => {
-                API.updateGame({
-                    id: round.gameID,
-                    win: round.playerID,
-                    lose: null
-                  })
-                  .then(() => {                    
+                // API.updateGame({
+                //     id: round.gameID,
+                //     win: round.playerID,
+                //     lose: null
+                //   })
+                  // .then(() => {                    
                     getStats(this.state.game, this.state.playerID, this.onGetStats);
-                  })
-                  .catch(e => console.log(e));
+                  // })
+                  // .catch(e => console.log(e));
               })
               .catch(e => console.log(e));
             });          
@@ -370,6 +388,15 @@ class Play extends Component {
     // and decrement counts down to zero and updates the state for the timer in the navbar  
     this.setState({timer: setInterval(this.setTimer, 1000)});
   }; 
+
+  saveWinner = (gameID, winner, loser) => {
+    console.log("saving winner for game: " + gameID);
+    API.updateGame({
+      id: gameID,
+      win: winner,
+      lose: loser
+    }).then((data)=>console.log(data)).catch((error)=>console.log(error));
+  };
 
   setBoard() {    
     const {match, ...symbols} = this.state.board.getSymbols(this.state.matches);

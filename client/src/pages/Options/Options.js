@@ -11,7 +11,6 @@ import { toast } from 'react-toastify';
 import API from "../../utils/API";
 import "./Options.css";
 
-
 class Options extends Component {
 
     state = {
@@ -107,6 +106,7 @@ class Options extends Component {
     };
 
     getGamesPlayed() {
+      //get all games from Mongo for the current player
       API.getGames(this.state.playerID)
         .then(({data})=> {
           const games = data.filter(({type}) => type === 0); 
@@ -115,10 +115,11 @@ class Options extends Component {
         });
     };
 
-    getGameTypes() {
-      const gameOptions = gameTypes[0].options           
+    getGameTypes() {      
+      //create and return an array of buttons to display
+      //one button for each game option.  
+      const gameOptions = gameTypes[0].options          
       const options = Object.keys(gameOptions).map((key, index) =>{
-        //console.log(gameOptions[index]);
         const optRecord = this.getMostMatches(gameOptions[index]);
         return (
           { 
@@ -137,15 +138,12 @@ class Options extends Component {
     getMostMatches(opt) {
       const matches = this.state.games.map(game => {
         return game.rounds[0].guesses.filter(({isMatch})=>{
+          //return guess if it is a match for the game type in question
           return (isMatch && game.option === opt)
         }).length;
       });
 
-      //console.log(matches);
-
-      // console.log(Math.max(...matches));
-
-      return Math.max(...matches)
+      return (matches.length) ? Math.max(...matches) : 0;
     };
 
     render() {
