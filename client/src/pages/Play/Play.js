@@ -168,21 +168,32 @@ class Play extends Component {
   };
   
   getResults = (stats, me) => {
-    const { game, playerID} = this.state;
-    const pID = (me) ? playerID : 
-          game.players
-            .filter(({id}) => id !== playerID)
-            .map(({id})=>id)[0];
-            
-    const results = stats[pID];
-    //add ID to results which makes updating Mongo easier when the winner is determined
-    if (results) results[results.length -1].id = pID; 
-    return (results) ? results[results.length -1] : {allGuesses: 0, correct: 0, incorrect: 0};
+    // console.log(stats);
+    try
+    {
+      const { game, playerID } = this.state;
+      const pID = (me) ? playerID : 
+            game.players
+              .filter(({id}) => id !== playerID)
+              .map(({id})=>id)[0];
+              
+      const results = stats[pID];
+
+      //add ID to results which makes updating Mongo easier when the winner is determined
+      results[results.length -1].id = pID;
+      return results[results.length -1]
+    }
+    catch (e)
+    {
+      console.log(e);
+      return {allGuesses: 0, correct: 0, incorrect: 0};
+    }
   };
 
   getWinner = (me, opp) => {
     const gameID = this.state.game._id;
     let msg = "Time's Up!";
+    console.log(opp);
     if(!opp.name) 
     {
       this.saveWinner(gameID, me.id, null);
@@ -207,6 +218,7 @@ class Play extends Component {
     return msg;
   };
 
+  //Check to see why guesses are not registering
   guessName = ({id, name}) => {    
     const { round, matches, gameID, playerID } = this.state;
     const match = matches[matches.length-1];
@@ -249,6 +261,7 @@ class Play extends Component {
   };  
   
   onGetStats = (stats) => {
+    //console.log(stats);
     const myResults = this.getResults(stats, true),
       oppResults = this.getResults(stats, false),
       winner = this.getWinner(myResults, oppResults);
@@ -265,24 +278,25 @@ class Play extends Component {
   pushRoundToMongo = () => {
     //push most recent round to mongoDB
     this.getIDBTable("game")
-        .then(({rounds})=>{          
-          rounds.forEach((round, index) => {
-            //if (!round) return; exit if no guesses made 
-            round.index = index;
-            API.saveRound(round)
-              .then(() => {
-                // API.updateGame({
-                //     id: round.gameID,
-                //     win: round.playerID,
-                //     lose: null
-                //   })
-                  // .then(() => {                    
+        .then(({rounds})=>{       
+          if (!rounds.length) 
+          {
+            console.log("no guesses made");
+            getStats(this.state.game, this.state.playerID, this.onGetStats);
+          }
+          else
+          {
+            rounds.forEach((round, index) => {
+              //if (!round) return; exit if no guesses made 
+              round.index = index;
+              API.saveRound(round)
+                .then(() => {   
+                    console.log("call get stats");               
                     getStats(this.state.game, this.state.playerID, this.onGetStats);
-                  // })
-                  // .catch(e => console.log(e));
-              })
-              .catch(e => console.log(e));
-            });          
+                })
+                .catch(e => console.log(e));
+            }); 
+          }         
         });
   };
 

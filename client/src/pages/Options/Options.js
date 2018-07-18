@@ -19,25 +19,32 @@ class Options extends Component {
       options: [],
       playerID: "",
       playerName:"",
-      play: false,
-      toastID: null
+      play: false
     };
+   
+    toastID = null
     
     onJoinedGame = (game) => {
       // console.log(game);
       if (game.players.length === 1 && game.type === 1)
       {
         toast.dismiss();
-        toast.info(`Game Created, waiting for another person to join`,{
-          autoClose: false
-        });
+        if(! toast.isActive(this.toastId))
+        {
+          this.toastID = toast.info(`Game Created, waiting for another person to join`,{
+            autoClose: false
+          });
+        }
       }
       else if (game.players.length === 2)
       {     
         toast.dismiss();   
-        toast.info(`We found a game for you to play!`,{
-          autoClose: false
-        });
+        if(! toast.isActive(this.toastId))
+        {
+          this.toastID = toast.info(`We found a game for you to play!`,{
+            autoClose: false
+          });
+        }
       }      
       startGame(game,this.onGameStarted);
     };
@@ -55,9 +62,12 @@ class Options extends Component {
             toast.dismiss();
             const other = game.players.filter(({id}) => id !== this.state.playerID)
                               .map(player=>player.name)[0];
-            toast.success(`Your game against ${other} begins now!`,{
-              autoClose: false
-            });
+              if(! toast.isActive(this.toastId))
+              {
+                this.toastID = toast.success(`Your game against ${other} begins now!`,{
+                  autoClose: false
+                });
+              }
             setTimeout(() => {
               toast.dismiss();
               this.setState({play:true})
@@ -79,7 +89,7 @@ class Options extends Component {
           playerName: this.state.playerName,
           type: gameType
         }, this.onJoinedGame);
-        this.setState({inGame:true});
+        if (gameType !== 0) this.setState({inGame:true});
       }
       
     };
@@ -97,7 +107,8 @@ class Options extends Component {
           {
             this.setState({
               playerID: profile[0].id,
-              playerName: profile[0].firstName
+              playerName: profile[0].firstName,
+              inGame: false
             });
             this.getGamesPlayed();
           }
