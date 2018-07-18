@@ -21,8 +21,11 @@ const io = {
             {
                 io.findOpenGame(game)
                     .then(game => {
-                        client.join(game._id);
-                        client.emit('joined', game);
+                        if (game)
+                        {
+                            client.join(game._id);
+                            client.emit('joined', game);
+                        }
                     });   
             }
         });
@@ -49,8 +52,10 @@ const io = {
             }
         });
         client.on('getStats', ({game, playerID}) => {
-            if (game.players[0].id != playerID) return;
+            client.join(game._id);
+            if (game.players[0].id !== playerID) return;    
             const { players, type, _id } = game;
+            // console.log(type);
             io.getGameStats(_id, players)
                 .then(stats => {
                     if (type) 
@@ -58,18 +63,27 @@ const io = {
                         server.in(game._id).emit('stats', stats);
                     }
                     else 
-                    {
-                        client.emit('stats', stats);
-                    }
+                    { 
+                        client.emit('stats', stats);                        
+                    }                    
                 });
+        });
+        client.on('disconnect', (reason) => {
+            console.log(`Disconnect because ${reason}`);
+            if (reason == "transport error") client.emit("reconnect");
+            // client.removeAllListeners('joinGame');
+            // client.removeAllListeners('startGame');
+            // client.removeAllListeners('getStats');
         });
     },
     findOpenGame: ({ option, playerID, playerName, type }) => {
        return new Promise((resolve, reject) => {           
            db.Game.find({closed:false, type, $where:"this.players.length < 3"})
                 .then(games => {
+                    console.log(games.length);
                     if (games.length === 1)
                     {
+                        console.log("join existing game");
                         const { _id, players } = games[0];
                         if(!players.filter(player => player.id === _id).length)
                         {
@@ -87,7 +101,7 @@ const io = {
                     }
                     else if (!games.length)
                     {
-                        //console.log('Creating Game');
+                        console.log('Creating Game');
                         db.Game.create({closed: false, 
                             option, 
                             players:[{id: playerID, name: playerName}], 
@@ -95,6 +109,16 @@ const io = {
                         })
                         .then(newGame => resolve(newGame))
                         .catch(err => reject(err));
+                    }
+                    else
+                    {
+                        const { _id} = games[games.length -1];
+                        console.log("close open game");
+                        db.Game.findByIdAndUpdate(_id,
+                            { closed: true }, 
+                            { new: true })
+                            .then(() => resolve(null))
+                            .catch(err => reject(err));
                     }
                 });
         });
@@ -113,15 +137,22 @@ const io = {
         });
     },
     getStatsByPlayer: (game, playerID)=>{
-        return game.rounds
+        const name =  io.getPlayerName(game, playerID);
+        const stats = game.rounds
             .filter(round => round.playerID === playerID)
             .map((round, rIndex) => {
-                return io.getRoundStats(round, io.getPlayerName(game, playerID));
+                return io.getRoundStats(round, name);
             });
+        
+            console.log(stats);
+        //return blank array if the user didn't make any guesses
+        //This step is necessary because getRoundStats is not called if the player didn't make any guesses in the alotted time
+        if (!stats.length) stats[0] = {correct: 0, incorrect: 0, allGuesses: 0, name};
+        
+        return stats;
     },
     getRoundStats: (round, name) => {
-        // console.log("round");
-        // console.log(round);
+        //this is only called if player made a guess
         const guesses = round.guesses;
         const correct = guesses.filter(guess => guess.isMatch).length;
         const incorrect = guesses.filter(guess => !guess.isMatch).length;

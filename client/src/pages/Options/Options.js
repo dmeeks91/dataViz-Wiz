@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {Redirect} from "react-router-dom";
-import { db, joinGame, startGame }from "../../utils";
+import { db, joinGame, startGame, disconnect }from "../../utils";
 import Collapsible from 'react-collapsible';
 import Nav from "../../components/Nav";
 import GameOptions from "../../components/GameOptions";
@@ -9,6 +9,7 @@ import gameTypes from "../../gameTypes.json";
 import { Button } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import API from "../../utils/API";
+import openSocket from 'socket.io-client';
 import "./Options.css";
 
 class Options extends Component {
@@ -20,26 +21,34 @@ class Options extends Component {
       playerID: "",
       playerName:"",
       play: false,
-      toastID: null
+      socket: openSocket()
     };
+   
+    toastID = null
     
     onJoinedGame = (game) => {
       // console.log(game);
       if (game.players.length === 1 && game.type === 1)
       {
         toast.dismiss();
-        toast.info(`Game Created, waiting for another person to join`,{
-          autoClose: false
-        });
+        if(! toast.isActive(this.toastId))
+        {
+          this.toastID = toast.info(`Game Created, waiting for another person to join`,{
+            autoClose: false
+          });
+        }
       }
       else if (game.players.length === 2)
       {     
         toast.dismiss();   
-        toast.info(`We found a game for you to play!`,{
-          autoClose: false
-        });
+        if(! toast.isActive(this.toastId))
+        {
+          this.toastID = toast.info(`We found a game for you to play!`,{
+            autoClose: false
+          });
+        }
       }      
-      startGame(game,this.onGameStarted);
+      startGame(this.state.socket, game, this.onGameStarted);
     };
 
     onGameStarted = (game) => {      
@@ -55,9 +64,12 @@ class Options extends Component {
             toast.dismiss();
             const other = game.players.filter(({id}) => id !== this.state.playerID)
                               .map(player=>player.name)[0];
-            toast.success(`Your game against ${other} begins now!`,{
-              autoClose: false
-            });
+              if(! toast.isActive(this.toastId))
+              {
+                this.toastID = toast.success(`Your game against ${other} begins now!`,{
+                  autoClose: false
+                });
+              }
             setTimeout(() => {
               toast.dismiss();
               this.setState({play:true})
@@ -73,13 +85,13 @@ class Options extends Component {
       
       if (!this.state.inGame)
       {        
-        joinGame({
+        joinGame(this.state.socket,{
           option,
           playerID: this.state.playerID,
           playerName: this.state.playerName,
           type: gameType
         }, this.onJoinedGame);
-        this.setState({inGame:true});
+        if (gameType !== 0) this.setState({inGame:true});
       }
       
     };
@@ -97,12 +109,17 @@ class Options extends Component {
           {
             this.setState({
               playerID: profile[0].id,
-              playerName: profile[0].firstName
+              playerName: profile[0].firstName,
+              inGame: false
             });
             this.getGamesPlayed();
           }
         });  
 
+    };
+
+    componentWillMount() {
+      //disconnect(this.state.socket);
     };
 
     getGamesPlayed() {
