@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {Redirect} from "react-router-dom";
-import { db, joinGame, startGame }from "../../utils";
+import { db, joinGame, startGame, disconnect }from "../../utils";
 import Collapsible from 'react-collapsible';
 import Nav from "../../components/Nav";
 import GameOptions from "../../components/GameOptions";
@@ -9,6 +9,7 @@ import gameTypes from "../../gameTypes.json";
 import { Button } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import API from "../../utils/API";
+import openSocket from 'socket.io-client';
 import "./Options.css";
 
 class Options extends Component {
@@ -19,7 +20,8 @@ class Options extends Component {
       options: [],
       playerID: "",
       playerName:"",
-      play: false
+      play: false,
+      socket: openSocket()
     };
    
     toastID = null
@@ -46,7 +48,7 @@ class Options extends Component {
           });
         }
       }      
-      startGame(game,this.onGameStarted);
+      startGame(this.state.socket, game, this.onGameStarted);
     };
 
     onGameStarted = (game) => {      
@@ -83,7 +85,7 @@ class Options extends Component {
       
       if (!this.state.inGame)
       {        
-        joinGame({
+        joinGame(this.state.socket,{
           option,
           playerID: this.state.playerID,
           playerName: this.state.playerName,
@@ -114,6 +116,10 @@ class Options extends Component {
           }
         });  
 
+    };
+
+    componentWillMount() {
+      //disconnect(this.state.socket);
     };
 
     getGamesPlayed() {

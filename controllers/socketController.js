@@ -51,7 +51,8 @@ const io = {
 
             }
         });
-        client.on('getStats', ({game, playerID}) => {   
+        client.on('getStats', ({game, playerID}) => {
+            client.join(game._id);
             if (game.players[0].id !== playerID) return;    
             const { players, type, _id } = game;
             // console.log(type);
@@ -59,7 +60,6 @@ const io = {
                 .then(stats => {
                     if (type) 
                     {
-                        // console.log(stats);
                         server.in(game._id).emit('stats', stats);
                     }
                     else 
@@ -68,14 +68,22 @@ const io = {
                     }                    
                 });
         });
+        client.on('disconnect', (reason) => {
+            console.log(`Disconnect because ${reason}`);
+            if (reason == "transport error") client.emit("reconnect");
+            // client.removeAllListeners('joinGame');
+            // client.removeAllListeners('startGame');
+            // client.removeAllListeners('getStats');
+        });
     },
     findOpenGame: ({ option, playerID, playerName, type }) => {
        return new Promise((resolve, reject) => {           
            db.Game.find({closed:false, type, $where:"this.players.length < 3"})
                 .then(games => {
+                    console.log(games.length);
                     if (games.length === 1)
                     {
-                        //console.log("join existing game");
+                        console.log("join existing game");
                         const { _id, players } = games[0];
                         if(!players.filter(player => player.id === _id).length)
                         {
@@ -93,7 +101,7 @@ const io = {
                     }
                     else if (!games.length)
                     {
-                        //console.log('Creating Game');
+                        console.log('Creating Game');
                         db.Game.create({closed: false, 
                             option, 
                             players:[{id: playerID, name: playerName}], 
@@ -104,7 +112,8 @@ const io = {
                     }
                     else
                     {
-                        //console.log("close open game");
+                        const { _id} = games[games.length -1];
+                        console.log("close open game");
                         db.Game.findByIdAndUpdate(_id,
                             { closed: true }, 
                             { new: true })

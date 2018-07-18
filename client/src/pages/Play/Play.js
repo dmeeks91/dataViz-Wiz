@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { db, board, getStats }from "../../utils";
+import { db, board, getStats, disconnect }from "../../utils";
 import {Container} from "../../components/Grid";
 import Nav from "../../components/Nav";
 import SingleResults from "../../components/SingleResults";
 import MultiResults from "../../components/MultiResults";
+import openSocket from 'socket.io-client';
 import { Link } from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
@@ -27,6 +28,7 @@ class Play extends Component {
     open: false,
     openResults: false,
     round: 1,
+    socket: openSocket(),
     symbols: {sym1:[],sym2:[]},
     time:0,
     timeInterval: 0,
@@ -131,7 +133,8 @@ class Play extends Component {
         });  
   };
 
-  componentWillUnmount() {  
+  componentWillUnmount() {
+    disconnect(this.state.socket);  
     window.removeEventListener("resize", () => this.resizeContainer());
   }
 
@@ -261,7 +264,7 @@ class Play extends Component {
   };  
   
   onGetStats = (stats) => {
-    //console.log(stats);
+    console.log(stats);
     const myResults = this.getResults(stats, true),
       oppResults = this.getResults(stats, false),
       winner = this.getWinner(myResults, oppResults);
@@ -278,11 +281,12 @@ class Play extends Component {
   pushRoundToMongo = () => {
     //push most recent round to mongoDB
     this.getIDBTable("game")
-        .then(({rounds})=>{       
+        .then(({rounds})=>{  
+          const {game, playerID, socket} = this.state;     
           if (!rounds.length) 
           {
             console.log("no guesses made");
-            getStats(this.state.game, this.state.playerID, this.onGetStats);
+            getStats(socket, game, playerID, this.onGetStats);
           }
           else
           {
@@ -292,7 +296,7 @@ class Play extends Component {
               API.saveRound(round)
                 .then(() => {   
                     console.log("call get stats");               
-                    getStats(this.state.game, this.state.playerID, this.onGetStats);
+                    getStats(socket, game, playerID, this.onGetStats);
                 })
                 .catch(e => console.log(e));
             }); 
