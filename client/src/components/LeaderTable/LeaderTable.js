@@ -1,18 +1,19 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import Collapsible from 'react-collapsible';
-import "./StatTable.css";
+import "./LeaderTable.css";
 
-const StatTable = ({header, rows}) => {
+const LeaderTable = ({header, rows}) => {
   return (
     <Collapsible transitionTime={150} trigger={header} style={{margin: 100}}> 
       <Table responsive striped bordered>
         <tbody>
-          {rows.map(({key, val}, index) => {
+          {rows.map(({rank, name, score}, index) => {
             return (
               <tr key={index} className="statTR">
-                <td>{key}</td>
-                <td><span className="badge badge-primary badge-pill multi">{val}</span></td>
+                <td>{rank}</td>
+                <td>{name}</td>
+                <td><span className="badge badge-primary badge-pill multi">{score}</span></td>
               </tr>
             );
           })}
@@ -21,4 +22,4 @@ const StatTable = ({header, rows}) => {
     </Collapsible>    
   )
 };
-export default StatTable;
+export default LeaderTable;

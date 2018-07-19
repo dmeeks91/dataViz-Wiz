@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import gameTypes from "../../gameTypes.json";
 import {Redirect} from "react-router-dom";
 import StatTable from "../../components/StatTable";
+import LeaderTable from "../../components/LeaderTable";
 import Nav from "../../components/Nav";
 import { db } from "../../utils";
 import API from "../../utils/API";
@@ -184,8 +185,15 @@ class Stats extends Component {
 
     avgScore.push({key:"Versus", val:this.getAvgScore(this.state.myGames[1])});
 
+    //Get Leaders
+    const leaders = Object.keys(gameOptions).map((a) => { 
+      const header = `Top 5 in ${gameOptions[a]}sec`,
+        rows = this.getTop5(this.state.allGames[0].filter(({option})=> option === gameOptions[a]));
+        return {header, rows}
+    });
+
     this.setState({
-      stats: {gamesPlayed, bestScore, avgScore}
+      stats: {gamesPlayed, bestScore, avgScore, leaders}
     })
   };
 
@@ -211,6 +219,33 @@ class Stats extends Component {
     return (matches.length) ? Math.max(...matches) : 0;
   };
 
+  getTop5 = (games) => {
+    const allMatches = games.map(game => {
+      return game.rounds.map(round => {
+        const matchCount = round.guesses.filter(({isMatch})=>{
+          return (isMatch)
+        }).length;
+        const playerName = game.players.filter(({id}) => id === round.playerID)
+                              .map(({id, name}) => (id === this.state.playerID) ? "You" : name )[0];
+        return {playerName, matchCount, id: round.playerID}
+      })            
+    }).map(data => data[0]);
+  
+    const sorted = allMatches.sort(this.compareNumbers);
+    const top5 = sorted.filter((val, indx, arr) => {
+      const ids = sorted.map(item => item.id);
+      return ids.indexOf(val.id) === indx; 
+    }).map((player, index) => {
+      return {rank: `#${index + 1}`, name: player.playerName, score: player.matchCount}
+    }).slice(0,5);
+
+    return top5;
+  };
+
+  compareNumbers = (a, b) => {
+    return b.matchCount - a.matchCount;
+  };
+  
   getUserRounds = () => {
     API.getRounds(this.state.playerID)
     .then(({ data })=> {
@@ -219,11 +254,25 @@ class Stats extends Component {
     });
   };
 
+  getLeaderComponents = () => {
+    if (!this.state.stats) return;
+    if (!this.state.stats.leaders) return;
+    return this.state.stats.leaders.map(({header, rows}) => {
+      return (<LeaderTable header={header} 
+        rows = {rows}
+      />)
+    });
+    
+  }
+
   render() {    
     //Redirect to Login page if not logged in
     if (this.state.logIn) {
         return <Redirect to="/"/>;
     }
+
+    const leaderComponents = this.getLeaderComponents();
+
     return (
     <div>
       <Nav title="DataViz-Wiz"/>
@@ -238,26 +287,26 @@ class Stats extends Component {
           <div className="card-header">Your Stats</div>
           <div className="card-body">
             {(this.state.stats != null) ?
-            <StatTable header="Games Played" 
+            <StatTable key="myStats01" header="Games Played" 
               rows = {this.state.stats.gamesPlayed}
             /> : 
-            <StatTable header="Games Played" rows={[
+            <StatTable key="myStats01" header="Games Played" rows={[
               {key:"Single Player", val: 0},
               {key:"Versus", val: 0}
             ]}/>}
             {(this.state.stats != null) ?
-            <StatTable header="Best Score" 
+            <StatTable key="myStats02" header="Best Score" 
               rows = {this.state.stats.bestScore}
             /> : 
-            <StatTable header="Best Score" rows={[
+            <StatTable key="myStats02" header="Best Score" rows={[
               {key:"Single Player", val: 0},
               {key:"Versus", val: 0}
             ]}/>}
             {(this.state.stats != null) ?
-            <StatTable header="Average Score" 
+            <StatTable key="myStats03" header="Average Score" 
               rows = {this.state.stats.avgScore}
             /> : 
-            <StatTable header="Average Score" rows={[
+            <StatTable key="myStats03" header="Average Score" rows={[
               {key:"Single Player", val: 0},
               {key:"Versus", val: 0}
             ]}/>}
@@ -265,19 +314,8 @@ class Stats extends Component {
         </div> 
         <div className="card statCard">
           <div className="card-header">Leader Board</div>
-          <div className="card-body">              
-            <StatTable header="Most in 30sec" 
-              rows={[
-                {key:"Single Player", val: 2},
-                {key:"Versus", val: 4}
-              ]}
-            />
-            <StatTable header="Best Accuracy" 
-              rows={[
-                {key:"Single Player", val: 2},
-                {key:"Versus", val: 4}
-              ]}
-            />
+          <div className="card-body"> 
+            {leaderComponents}
           </div>
         </div>     
       </div>
