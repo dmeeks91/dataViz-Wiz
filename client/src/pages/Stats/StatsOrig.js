@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import gameTypes from "../../gameTypes.json";
+import { Container } from "../../components/Grid";
 import {Redirect} from "react-router-dom";
-import StatTable from "../../components/StatTable";
+import Jumbotron from "../../components/Jumbotron";
 import Nav from "../../components/Nav";
 import { db } from "../../utils";
 import API from "../../utils/API";
-import "./Stats.css";
 
 
 class Stats extends Component {
@@ -14,10 +13,9 @@ class Stats extends Component {
     name: "",
     logIn: false,
     playerID: "",
-    myGames: {0:[],1:[]},
-    allGames: {0:[],1:[]},
+    games: {},
     height: 0,
-    stats: null,
+    stats: [],
     rounds: [],
     mostMissed: "",
     totalGames: 0,
@@ -64,25 +62,13 @@ class Stats extends Component {
     //get all games from Mongo for the current player
     API.getGames(this.state.playerID)
       .then(({data})=> {
-        const myGames = {
+        const games = {
           0: data.filter(({type}) => type === 0),
           1: data.filter(({type}) => type === 1)
         };
-        this.setState({myGames});
-
-        //Get all games in mongo
-        API.getGames("all")
-        .then(({data})=> {
-          const allGames = {
-            0: data.filter(({type}) => type === 0),
-            1: data.filter(({type}) => type === 1)
-          };
-          this.setState({allGames});
-          this.getStatTableRows();
-        });
-      });        
+        this.setState({games});
+      });
   };
-
   getGames = () => {
     db.table('userProfile')
       .toArray()
@@ -155,62 +141,6 @@ class Stats extends Component {
     }).reduce((a, b) => {return a.concat(b)}, []);
   };
 
-  getStatTableRows = () => {
-    //Get Games Played Stat Rows
-    const gameOptions = gameTypes[0].options;
-    const gamesPlayed = Object.keys(gameOptions).map((a) =>{
-      const key = `Single Player (${gameOptions[a]}sec)`,
-       val = this.state.myGames[0].filter(game => game.option === gameOptions[a]).length;
-       return {key, val};
-    });
-
-    gamesPlayed.push({key:"Versus", val: this.state.myGames[1].length});
-
-    //Get Best Score Rows
-    const bestScore = Object.keys(gameOptions).map((a) =>{
-      const key = `Single Player (${gameOptions[a]}sec)`,
-       val = this.getBestScore(this.state.myGames[0].filter(game => game.option === gameOptions[a]));
-       return {key, val};
-    });
-
-    bestScore.push({key:"Versus", val:this.getBestScore(this.state.myGames[1])})
-
-    //Get Average Score Rows
-    const avgScore = Object.keys(gameOptions).map((a) =>{
-      const key = `Single Player (${gameOptions[a]}sec)`,
-       val = this.getAvgScore(this.state.myGames[0].filter(game => game.option === gameOptions[a]));
-       return {key, val};
-    });
-
-    avgScore.push({key:"Versus", val:this.getAvgScore(this.state.myGames[1])});
-
-    this.setState({
-      stats: {gamesPlayed, bestScore, avgScore}
-    })
-  };
-
-  getAvgScore = (games) => {
-    const matches = games.map(game => {
-      return game.rounds[0].guesses.filter(({isMatch})=>{
-        return (isMatch)
-      }).length;
-    });
-    //console.log(matches);
-    const average = (!matches.length) ? 0 : matches.reduce((a,b)=>a+b)/matches.length;
-    //console.log(avg);
-    return average.toFixed(1);
-  };
-
-  getBestScore = (games) => {
-    const matches = games.map(game => {
-      return game.rounds[0].guesses.filter(({isMatch})=>{
-        return (isMatch)
-      }).length;
-    });
-    
-    return (matches.length) ? Math.max(...matches) : 0;
-  };
-
   getUserRounds = () => {
     API.getRounds(this.state.playerID)
     .then(({ data })=> {
@@ -227,60 +157,43 @@ class Stats extends Component {
     return (
     <div>
       <Nav title="DataViz-Wiz"/>
-      <div className="container" style={{height:this.state.height}}>    
-        <div className="card statCard">  
-          <div id="name" className="card-header">{this.state.name}</div>   
-          <div className="card-body">
-            <img id="usrImg" alt="userImage" src={this.state.imageUrl}/>
+      <Container style={{height:this.state.height}}>       
+        {/* <Jumbotron style={{ marginBottom: "0px"}}> */}
+          <div className="row">
+            <div className="col-sm-2">
+              <img alt="userImage" style={{width: 200, marginTop: 10}} src={this.state.imageUrl}/>
+            </div>
+            <div className="col-sm-8">
+              <p style={{fontSize: 30, marginTop:10, fontWeight: 700, textDecoration: "underline"}}> {this.state.name} </p>
+            </div>
           </div>
-        </div>
-        <div className="card statCard">
-          <div className="card-header">Your Stats</div>
-          <div className="card-body">
-            {(this.state.stats != null) ?
-            <StatTable header="Games Played" 
-              rows = {this.state.stats.gamesPlayed}
-            /> : 
-            <StatTable header="Games Played" rows={[
-              {key:"Single Player", val: 0},
-              {key:"Versus", val: 0}
-            ]}/>}
-            {(this.state.stats != null) ?
-            <StatTable header="Best Score" 
-              rows = {this.state.stats.bestScore}
-            /> : 
-            <StatTable header="Best Score" rows={[
-              {key:"Single Player", val: 0},
-              {key:"Versus", val: 0}
-            ]}/>}
-            {(this.state.stats != null) ?
-            <StatTable header="Average Score" 
-              rows = {this.state.stats.avgScore}
-            /> : 
-            <StatTable header="Average Score" rows={[
-              {key:"Single Player", val: 0},
-              {key:"Versus", val: 0}
-            ]}/>}
+          <div className="row align-items-center">
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, fontWeight: "bold", textAlign: "right"}}> Total Games: </p>
+            </div>
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, textAlign: "left"}}> {this.state.totalGames} </p>
+            </div>
           </div>
-        </div> 
-        <div className="card statCard">
-          <div className="card-header">Leader Board</div>
-          <div className="card-body">              
-            <StatTable header="Most in 30sec" 
-              rows={[
-                {key:"Single Player", val: 2},
-                {key:"Versus", val: 4}
-              ]}
-            />
-            <StatTable header="Best Accuracy" 
-              rows={[
-                {key:"Single Player", val: 2},
-                {key:"Versus", val: 4}
-              ]}
-            />
+          <div className="row align-items-center">
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, fontWeight: "bold", textAlign: "right"}}> Average Score: </p>
+            </div>
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, textAlign: "left"}}> {this.state.avgRounds} </p>
+            </div>
           </div>
-        </div>     
-      </div>
+          <div className="row align-items-center">
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, fontWeight: "bold", textAlign: "right"}}> Most Missed: </p>
+            </div> 
+            <div className="col-sm-6 col-6">
+              <p style={{marginTop: 10, fontSize: 20, textAlign: "left"}}> {this.state.mostMissed} </p>
+            </div>
+          </div>
+
+        {/* </Jumbotron> */}
+      </Container>
     </div>
     );
   };

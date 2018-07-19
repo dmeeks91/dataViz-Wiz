@@ -58,22 +58,25 @@ const io = {
             // console.log(type);
             io.getGameStats(_id, players)
                 .then(stats => {
-                    if (type) 
-                    {
-                        server.in(game._id).emit('stats', stats);
-                    }
-                    else 
-                    { 
-                        client.emit('stats', stats);                        
-                    }                    
+                    // if (type) 
+                    // {
+                        server.in(_id).emit('stats', stats);
+                    // }
+                    // else 
+                    // { 
+                    //     client.emit('stats', stats);                        
+                    // }                    
                 });
         });
         client.on('disconnect', (reason) => {
-            console.log(`Disconnect because ${reason}`);
-            if (reason == "transport error") client.emit("reconnect");
-            // client.removeAllListeners('joinGame');
-            // client.removeAllListeners('startGame');
-            // client.removeAllListeners('getStats');
+            if (reason == "transport error" || reason == "ping timeout") 
+            {
+                client.emit("reconnect");
+            }
+            else
+            {                
+                console.log(`Disconnect because ${reason}`);
+            }
         });
     },
     findOpenGame: ({ option, playerID, playerName, type }) => {

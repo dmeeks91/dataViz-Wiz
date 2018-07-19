@@ -1,3 +1,53 @@
 .bg-primary {
     background-color: #fa5553 !important;
 }
+
+.statsRow {
+    width: 100%;
+    height: 150px;
+    margin: auto;
+}
+
+#name {
+    font-size: 150%;
+    font-weight: bold;
+    color: #fa5553;
+    margin-top: unset;
+    background-color: white;
+}
+
+#usrImg {
+    vertical-align: middle;
+    border-style: none;
+    max-height: 175px;
+    margin: auto;
+    padding: unset;
+    width: 50%;
+}
+
+.card.statCard {
+    margin: auto;
+    border: 0px;
+    max-width: 95%;
+}
+
+.statCard .card-header {
+    background-color: white;
+    font-size: 125%;
+    font-style: italic;
+    font-weight: bold;
+    color: #78a3d7;
+}
+
+.Collapsible__trigger {
+    font-size: 150%;
+    display: block;
+    background-color: #78a3d7;
+    color: white;
+    padding-bottom: 5px;
+    border-radius: 8px;
+}
+
+.card-body .Collapsible {
+    width: unset;
+}

@@ -21,20 +21,17 @@ function startGame(socket, gameObj, cb){
 // }
 
 function getStats(socket, gameObj, playerID, cb){
-    //if (!socket) socket = openSocket();
     socket.on(`stats`, (stats) => cb(stats));
+    socket.on(`reconnect`,()=>{
+        console.log("reconnecting socket");
+        socket.open();
+    });
     socket.emit(`getStats`, {game: gameObj, playerID});
-    // console.log("Post-Game Socket");
-    // console.log(socket);
-    // setTimeout(() => {
-    //     socket.disconnect(true);
-    //     console.log("Post-Disconnect Socket");
-    //     console.log(socket);
-    // }, 5000);
 }
 
 function disconnect(socket)
 {
+    console.log("disconnecting socket");
     socket.disconnect(true);
 }
 
