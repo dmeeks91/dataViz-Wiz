@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {Redirect} from "react-router-dom";
-import { db, joinGame, startGame, disconnect }from "../../utils";
+import { db, joinGame, startGame }from "../../utils";
 import Collapsible from 'react-collapsible';
 import Nav from "../../components/Nav";
 import GameOptions from "../../components/GameOptions";
