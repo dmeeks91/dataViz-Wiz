@@ -64,13 +64,18 @@ module.exports = {
   },
   
   getGames: (req, res) => {
-    //console.log(req.params.id);
-    db.Game.find({win: req.params.id})
+    // get games where at least one guess has been made
+    const query = (req.params.id != "all") ? {"players.id" : req.params.id, $where:"this.rounds.length > 0"} 
+    : {$where:"this.rounds.length > 0"};
+
+      db.Game.find(query)
       .populate('rounds')
       .then(games => {
+        // console.log(games.length);
         res.json(games);
       })
       .catch(err => res.json(err));
+    
   },
 
   updateGame: (req, res) => {
