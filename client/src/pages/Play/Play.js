@@ -8,6 +8,7 @@ import openSocket from 'socket.io-client';
 import { Link } from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
+import symbolsJSON from "../../symbols.json";
 import Modal from "react-responsive-modal";
 import { toast } from 'react-toastify';
 import { Row, Button} from "react-bootstrap";
@@ -62,6 +63,11 @@ class Play extends Component {
     const [g1, g2] = this.state.guesses;
 
     this.alert(g1.symbolID === g2.symbolID);   
+  };
+
+  clearMatches = () => {
+    console.log("clearing matches")
+    this.setState({matches:[]});
   };
 
   clickSymbol = (boardID, symbolID) => {
@@ -221,7 +227,6 @@ class Play extends Component {
     return msg;
   };
 
-  //Check to see why guesses are not registering
   guessName = ({id, name}) => {    
     const { round, matches, gameID, playerID } = this.state;
     const match = matches[matches.length-1];
@@ -417,11 +422,13 @@ class Play extends Component {
   };
 
   setBoard() {    
-    const {match, ...symbols} = this.state.board.getSymbols(this.state.matches);
+    //Clear matches array if neccesary
+    //if (this.state.matches.length >= symbolsJSON.length - 2) this.clearMatches();    
+    const {match, clear, ...symbols} = this.state.board.getSymbols(this.state.matches);
     this.setState({
       symbols,
       guesses: [],
-      matches: [...this.state.matches, match]
+      matches: (clear) ? [match] : [...this.state.matches, match]
     });
   };
 
