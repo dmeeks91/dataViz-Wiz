@@ -140,7 +140,7 @@ class Play extends Component {
   };
 
   componentWillUnmount() {
-    disconnect(this.state.socket);  
+    //disconnect(this.state.socket);  
     window.removeEventListener("resize", () => this.resizeContainer());
   }
 

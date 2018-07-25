@@ -5,8 +5,8 @@ function joinGame(socket, details, cb){
     //if (!socket) socket = openSocket();
     socket.on(`joined`, (game) => cb(game));
     socket.emit(`joinGame`, details);
-    console.log("Pre-Game Socket");
-    console.log(socket);
+    //console.log("Pre-Game Socket");
+    //console.log(socket);
 }
 
 function startGame(socket, gameObj, cb){
