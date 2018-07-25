@@ -156,7 +156,7 @@ class Play extends Component {
   getButtons = () => {
     const buttons = this.getAnswerArray().map(symbol =>{
       return (
-        <Button className="col-sm-2" 
+        <Button className="col-12" 
           bsStyle="primary" key={symbol.id}
           block
           onClick={()=>this.guessName(symbol)}
