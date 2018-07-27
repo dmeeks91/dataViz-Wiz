@@ -53,7 +53,10 @@ const io = {
         });
         client.on('getStats', ({game, playerID}) => {
             client.join(game._id);
-            if (game.players[0].id !== playerID) return;    
+            const room = server.sockets.adapter.rooms[game._id];
+            //console.log(room.length);
+            if(room.length < 2) return;
+            //if (game.players[0].id !== playerID) return;    
             const { players, type, _id } = game;
             // console.log(type);
             io.getGameStats(_id, players)
