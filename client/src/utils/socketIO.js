@@ -31,6 +31,8 @@ function getStats(socket, gameObj, playerID, cb){
 
 function disconnect(socket)
 {
+    //https://stackoverflow.com/questions/34093173/how-to-get-current-room-of-socket-on-disconnect
+    //Let other person in game know that partner left
     console.log("disconnecting socket");
     socket.disconnect(true);
 }

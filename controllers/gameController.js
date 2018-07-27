@@ -63,7 +63,7 @@ module.exports = {
       .findOneAndUpdate({ playerID: req.body.playerID },)
   },
   
-  getGames: (req, res) => {
+  getGames: (req, res) => { 
     // get games where at least one guess has been made
     const query = (req.params.id != "all") ? {"players.id" : req.params.id, $where:"this.rounds.length > 0"} 
     : {$where:"this.rounds.length > 0"};
@@ -86,3 +86,17 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   }
 };
+
+//Code used to fix issue with Ronnies ghost ID
+// db.Game.update(
+//   {},
+//   {$set:{"players.$[el].id":"5b587d1ca15d10553034f85f"}},
+//   {
+//       multi:true,
+//       arrayFilters:[{"el.name":{$eq:"Ronnie"}}]
+//   }
+// )
+// db.Round.update(
+//   {"playerID":"5b4c004979453060c1d19ab9"},
+//   {$set:{"playerID":"5b587d1ca15d10553034f85f"}},
+//   {multi:true})

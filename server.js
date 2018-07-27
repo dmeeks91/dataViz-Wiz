@@ -11,8 +11,8 @@ const socket = require("./controllers/socketController");
 
 
 io.on('connection', (client) => {
-  console.log("connecting to server");
-  console.log(client.id);
+  //console.log("connecting to server");
+  //console.log(client.id);
   socket.io.connect(client, io)
 });
 

@@ -134,6 +134,7 @@ class Play extends Component {
               })
               this.resizeContainer();
               window.addEventListener("resize", () => this.resizeContainer());
+              console.log("newGame");
               this.startNewGame();
             }
         });  
