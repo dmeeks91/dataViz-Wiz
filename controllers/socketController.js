@@ -55,7 +55,7 @@ const io = {
             client.join(game._id);
             const room = server.sockets.adapter.rooms[game._id];
             //console.log(room.length);
-            if(room.length < 2) return;
+            if(room.length < 2 && game.type === 1) return;
             //if (game.players[0].id !== playerID) return;    
             const { players, type, _id } = game;
             // console.log(type);
