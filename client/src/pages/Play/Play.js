@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { db, board, getStats, disconnect }from "../../utils";
+import { db, board, getStats}from "../../utils";//, disconnect 
 import {Container} from "../../components/Grid";
 import Nav from "../../components/Nav";
 import SingleResults from "../../components/SingleResults";
@@ -8,7 +8,7 @@ import openSocket from 'socket.io-client';
 import { Link } from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import Symbol from "../../components/Symbol";
-import symbolsJSON from "../../symbols.json";
+//import symbolsJSON from "../../symbols.json";
 import Modal from "react-responsive-modal";
 import { toast } from 'react-toastify';
 import { Row, Button} from "react-bootstrap";
