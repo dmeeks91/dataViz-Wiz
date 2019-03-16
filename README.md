@@ -1,6 +1,6 @@
 # DataViz-Wiz
 
-[DataViz-Wiz](http://dataviz-wiz.herokuapp.com/) is a fast-paced, challenging, and educational application to improve a user's understanding of data visualization. A user is presented a collection of graphs and required to quickly identify the matching pair. 
+[DataViz-Wiz](https://dataviz-wiz.herokuapp.com/) is a fast-paced, challenging, and educational application to improve a user's understanding of data visualization. A user is presented a collection of graphs and required to quickly identify the matching pair. 
 
 DataViz-Wiz brings [The Graphic Continuum Match It Game](https://policyviz.com/product/the-graphic-continuum-match-it-game/) by [Severino Ribecca](https://www.datavizcatalogue.com) and [Jonathan Schwabish](https://www.policyviz.com) to your mobile device.
 
